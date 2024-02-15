@@ -1,0 +1,2 @@
+parking-bot/Resources/Raw/parking.json filter=git-crypt diff=git-crypt
+java.keystore  filter=git-crypt diff=git-crypt
