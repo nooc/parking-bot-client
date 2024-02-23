@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 
-using Shiny;
+using Microsoft.Extensions.Logging;
 
 using ParkingBot.Factories;
 using ParkingBot.Handlers;
@@ -8,7 +8,9 @@ using ParkingBot.Pages;
 using ParkingBot.Services;
 using ParkingBot.ViewModels;
 
-using Microsoft.Extensions.Logging;
+using Shiny;
+
+using SkiaSharp.Views.Maui.Controls.Hosting;
 
 
 namespace ParkingBot;
@@ -22,6 +24,7 @@ public static class MauiProgram
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
             .UseShiny()
+            .UseSkiaSharp(true)
             .ConfigureFonts(fonts =>
             {
                 fonts
@@ -35,7 +38,6 @@ public static class MauiProgram
         isc.AddGps<MultiDelegate>()
             .AddGeofencing<MultiDelegate>()
             .AddNotifications<MultiDelegate>()
-            .AddGeofencing<MultiDelegate>()
             .AddJobs()
             // Clients
             .AddSingleton(GetHttpClient())
@@ -43,15 +45,17 @@ public static class MauiProgram
             .AddSingleton<ParkingSettingsFactoryService>()
             // Services
             .AddSingleton<KioskParkingService>()
-            .AddSingleton<SMSParkingService>()
+            .AddSingleton<TollParkingService>()
             .AddSingleton<GeoFencingService>()
             .AddSingleton<ServiceHelperService>()
             .AddSingleton<SmsService>()
             // ViewModels
-            .AddSingleton<MainPageVm>()
+            .AddSingleton<_ServiceControlPageVm>()
+            .AddSingleton<ParkingMapPageVm>()
             .AddSingleton<SettingsPageVm>()
             // Views
-            .AddTransient<TokenPage>()
+            .AddTransient<ParkingMapPage>()
+            .AddTransient<ServiceControlPage>()
             .AddTransient<MainPage>()
             .AddTransient<SettingsPage>()
             .AddTransient<AboutPage>()
