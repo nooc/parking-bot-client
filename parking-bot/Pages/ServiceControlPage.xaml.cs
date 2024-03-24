@@ -1,21 +1,13 @@
-﻿using ParkingBot.ViewModels;
-
-namespace ParkingBot.Pages;
+﻿namespace ParkingBot.Pages;
 
 public partial class ServiceControlPage : ContentPage
 {
-    private readonly ServiceControlPageVm ViewModel;
     private readonly IDispatcherTimer Timer;
 
     public ServiceControlPage()
     {
-        var wm = Application.Current?.Handler.MauiContext?.Services.GetService<ServiceControlPageVm>();
-        if (wm != null) ViewModel = wm;
-        else throw new NullReferenceException("ServiceControlPageVm is null.");
-
         InitializeComponent();
 
-        BindingContext = ViewModel;
         Timer = Dispatcher.CreateTimer();
         Timer.Interval = TimeSpan.FromSeconds(30);
         Timer.Tick += Timer_Tick;
@@ -23,7 +15,7 @@ public partial class ServiceControlPage : ContentPage
 
     private void Timer_Tick(object? sender, EventArgs e)
     {
-        ViewModel.TickWhenVisible();
+        //ViewModel.TickWhenVisible();
     }
 
     protected override void OnAppearing()
@@ -50,6 +42,6 @@ public partial class ServiceControlPage : ContentPage
 
     private void ContentPage_Loaded(object sender, EventArgs e)
     {
-        ViewModel.LoadModelCommand.Execute(this);
+        //ViewModel.LoadModelCommand.Execute(this);
     }
 }

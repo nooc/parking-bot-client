@@ -6,7 +6,13 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:DataType="vm:ServiceControlPageVm"
              Loaded="ContentPage_Loaded"
-             x:Class="ParkingBot.Pages.ServiceControlPage">
+             x:Class="ParkingBot.Pages.ServiceControlPage"
+             Title="{Binding Title}">
+    
+    <ContentPage.BindingContext>
+        <vm:HistoryPageVm />
+    </ContentPage.BindingContext>
+    
     <ContentPage.Resources>
         <ResourceDictionary>
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
