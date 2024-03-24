@@ -50,15 +50,17 @@ public static class MauiProgram
             .AddSingleton<ServiceHelperService>()
             .AddSingleton<SmsService>()
             // ViewModels
-            .AddSingleton<_ServiceControlPageVm>()
+            .AddSingleton<ServiceControlPageVm>()
             .AddSingleton<ParkingMapPageVm>()
             .AddSingleton<SettingsPageVm>()
+            .AddSingleton<HistoryPageVm>()
             // Views
             .AddTransient<ParkingMapPage>()
             .AddTransient<ServiceControlPage>()
-            .AddTransient<MainPage>()
+            .AddTransient<HistoryPage>()
             .AddTransient<SettingsPage>()
             .AddTransient<AboutPage>()
+            .AddTransient<MainPage>()
         ;
 
 #if DEBUG

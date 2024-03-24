@@ -14,4 +14,6 @@ public sealed class Values
     public static readonly string TOKEN_USER_KEY = "token.user";
     // Misc
     public static readonly int MAX_HISTORY = 10;
+
+    public static string USER_AGENT => $"ParkingBot/1.0 ({DeviceInfo.Current.Platform})";
 }

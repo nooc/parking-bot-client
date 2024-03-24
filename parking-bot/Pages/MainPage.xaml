@@ -4,11 +4,14 @@
             xmlns:pages="clr-namespace:ParkingBot.Pages"
             xmlns:vm="clr-namespace:ParkingBot.ViewModels"
             xmlns:p="clr-namespace:ParkingBot.Properties"
+            xmlns:android="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific;assembly=Microsoft.Maui.Controls"
+            android:TabbedPage.IsSwipePagingEnabled="False"
             x:Class="ParkingBot.Pages.MainPage"
             x:DataType="vm:MainPageVm"
             Title="{x:Static p:Lang.app_title}">
-
-    <pages:ServiceControlPage />
-    <pages:ParkingMapPage />
-    <pages:HistoryPage />
+    
+    <TabbedPage.BindingContext>
+        <vm:MainPageVm />
+    </TabbedPage.BindingContext>
+    
 </TabbedPage>
