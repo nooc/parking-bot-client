@@ -10,4 +10,9 @@ public partial class MainPage : TabbedPage
         Children.Add(pmp);
         Children.Add(hp);
     }
+
+    protected override void OnAppearing()
+    {
+
+    }
 }

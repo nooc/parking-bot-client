@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "parking-bot", "parking-bot\parking-bot.csproj", "{491B3D63-1C03-49BB-991C-7AB8A5D96DDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "parking-bot", "parking-bot\parking-bot.csproj", "{491B3D63-1C03-49BB-991C-7AB8A5D96DDA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dev-utils", "dev-utils\dev-utils.csproj", "{F9EE8610-AF76-4E70-A028-47A89CEA6278}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,6 +19,10 @@ Global
 		{491B3D63-1C03-49BB-991C-7AB8A5D96DDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{491B3D63-1C03-49BB-991C-7AB8A5D96DDA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{491B3D63-1C03-49BB-991C-7AB8A5D96DDA}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{F9EE8610-AF76-4E70-A028-47A89CEA6278}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9EE8610-AF76-4E70-A028-47A89CEA6278}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9EE8610-AF76-4E70-A028-47A89CEA6278}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9EE8610-AF76-4E70-A028-47A89CEA6278}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

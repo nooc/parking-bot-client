@@ -44,6 +44,10 @@ public static class MauiProgram
             // Settings
             .AddSingleton<ParkingSettingsFactoryService>()
             // Services
+#if ANDROID21_0_OR_GREATER
+            .AddSingleton<AuthServicePlayIntegrity>()
+#elif IOS
+#endif
             .AddSingleton<KioskParkingService>()
             .AddSingleton<TollParkingService>()
             .AddSingleton<GeoFencingService>()

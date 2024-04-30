@@ -42,16 +42,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Google.Apis.PlayIntegrity.v1" Version="1.68.0.3400" />
 		<PackageReference Include="Mapsui.Maui" Version="4.1.5" />
-		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.14" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.14" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.21" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.21" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
-		<PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
-		<PackageReference Include="Shiny.BluetoothLE" Version="3.3.0" />
-		<PackageReference Include="Shiny.Hosting.Maui" Version="3.3.0" />
-		<PackageReference Include="Shiny.Jobs" Version="3.3.0" />
-		<PackageReference Include="Shiny.Locations" Version="3.3.0" />
-		<PackageReference Include="Shiny.Notifications" Version="3.3.0" />
+		<PackageReference Include="CommunityToolkit.Maui" Version="8.0.1" />
+		<PackageReference Include="Shiny.BluetoothLE" Version="3.3.3" />
+		<PackageReference Include="Shiny.Hosting.Maui" Version="3.3.3" />
+		<PackageReference Include="Shiny.Jobs" Version="3.3.3" />
+		<PackageReference Include="Shiny.Locations" Version="3.3.3" />
+		<PackageReference Include="Shiny.Notifications" Version="3.3.3" />
 	</ItemGroup>
 
 	<ItemGroup>
