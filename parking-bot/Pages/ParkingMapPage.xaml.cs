@@ -14,6 +14,7 @@ public partial class ParkingMapPage : ContentPage
     {
         if (MapCtrl.Map is Mapsui.Map map)
         {
+            Vm.Map = map;
             map.Layers.Add(Mapsui.Tiling.OpenStreetMap.CreateTileLayer(Properties.Values.USER_AGENT));
             map.Info += Map_MapInfo;
             //MapCtrl.Zoomed += MapCtrl_Zoomed;
@@ -32,7 +33,7 @@ public partial class ParkingMapPage : ContentPage
                     var (x, y) = Mapsui.Projections.SphericalMercator.FromLonLat(loc.Longitude, loc.Latitude);
                     MapCtrl.Map.Navigator.CenterOnAndZoomTo(new Mapsui.MPoint(x, y), 2);
                 }
-                UpdateLocation();
+                //UpdateLocation();
             });
     }
 

@@ -5,8 +5,8 @@ namespace ParkingBot;
 
 public partial class App : Application
 {
-    private readonly IAuthService Auth;
-    public App(MainPage mainPage, IAuthService auth)
+    private readonly UserAuthService Auth;
+    public App(MainPage mainPage, UserAuthService auth)
     {
         Auth = auth;
         UserAppTheme = AppTheme.Unspecified;
@@ -20,6 +20,7 @@ public partial class App : Application
     {
         base.OnStart();
 
-        await Auth.AuthenticateAsync();
+        //TODO: auth
+        //await Auth.AuthenticateAsync();
     }
 }
