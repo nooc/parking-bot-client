@@ -7,6 +7,8 @@ using ParkingBot.Properties;
 using ParkingBot.Services;
 using ParkingBot.Util;
 
+using Shiny;
+using Shiny.BluetoothLE;
 using Shiny.Jobs;
 using Shiny.Locations;
 using Shiny.Notifications;
@@ -15,7 +17,7 @@ using System.Text.Json;
 
 namespace ParkingBot.Handlers;
 
-public class MultiDelegate : IGeofenceDelegate, IGpsDelegate, INotificationDelegate
+public class MultiDelegate : IBleDelegate, IGeofenceDelegate, IGpsDelegate, INotificationDelegate
 {
     private readonly IGpsManager _gps;
     private readonly IGeofenceManager _geo;
@@ -113,5 +115,26 @@ public class MultiDelegate : IGeofenceDelegate, IGpsDelegate, INotificationDeleg
             }
             await _gps.StopListener();
         }
+    }
+
+    // BLUETOOTH
+    // Parking actions should only occure while we have a device connection. 
+    public Task OnPeripheralStateChanged(IPeripheral peripheral)
+    {
+        if (peripheral.Status == ConnectionState.Connected)
+        {
+            // TODO: Enable parking actions
+        }
+        else if (peripheral.Status == ConnectionState.Disconnected)
+        {
+            // TODO: Disable parking actions
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public Task OnAdapterStateChanged(AccessState state)
+    {
+        return Task.CompletedTask;
     }
 }

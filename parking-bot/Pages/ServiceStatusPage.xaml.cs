@@ -1,14 +1,15 @@
 ﻿namespace ParkingBot.Pages;
 
-public partial class ServiceControlPage : ContentPage
+public partial class ServiceStatusPage : ContentPage
 {
     private readonly IDispatcherTimer Timer;
 
-    public ServiceControlPage()
+    public ServiceStatusPage()
     {
+        Timer = Dispatcher.CreateTimer();
+
         InitializeComponent();
 
-        Timer = Dispatcher.CreateTimer();
         Timer.Interval = TimeSpan.FromSeconds(30);
         Timer.Tick += Timer_Tick;
     }
@@ -43,5 +44,10 @@ public partial class ServiceControlPage : ContentPage
     private void ContentPage_Loaded(object sender, EventArgs e)
     {
         //ViewModel.LoadModelCommand.Execute(this);
+    }
+
+    private async void ManageDevices_Clicked(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(Handler?.MauiContext?.Services.GetService<ManageDevicesPage>());
     }
 }

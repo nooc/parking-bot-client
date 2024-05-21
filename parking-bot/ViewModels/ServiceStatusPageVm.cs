@@ -4,11 +4,9 @@ using ParkingBot.Models.Parking;
 using ParkingBot.Properties;
 using ParkingBot.Services;
 
-using System.Collections.ObjectModel;
-
 namespace ParkingBot.ViewModels;
 
-public class ServiceControlPageVm : BaseVm
+public class ServiceStatusPageVm : BaseVm
 {
     private readonly GeoFencingService _geo;
     private readonly KioskParkingService _kiosk;
@@ -16,7 +14,7 @@ public class ServiceControlPageVm : BaseVm
     private readonly ILogger _logger;
 
     public string Title => "TITLE";
-    public ObservableCollection<ParkingTicket> History { get; } = [];
+
     private ISiteInfo? Info = null;
     public bool IsActive
     {
@@ -30,9 +28,9 @@ public class ServiceControlPageVm : BaseVm
     public string StatusText { get; private set; }
     public string UserGreeting { get; private set; }
 
-    public Command LoadModelCommand { get; private set; }
-
-    public ServiceControlPageVm(ILogger<MainPageVm> logger, GeoFencingService geofencingService, KioskParkingService kioskParkingService, TollParkingService smsParkingService)
+    public ServiceStatusPageVm(ILogger<MainPageVm> logger, GeoFencingService geofencingService,
+        KioskParkingService kioskParkingService, TollParkingService smsParkingService)
+        : base()
     {
         _geo = geofencingService;
         _logger = logger;
@@ -45,11 +43,9 @@ public class ServiceControlPageVm : BaseVm
         Availability = string.Empty;
         StatusText = string.Empty;
         UserGreeting = string.Empty;
-
-        LoadModelCommand = new Command(ExecuteLoadModelCommand);
     }
 
-    private async void ExecuteLoadModelCommand()
+    protected async override void ExecuteLoadModelCommand()
     {
         IsBusy = true;
         try
@@ -102,12 +98,6 @@ public class ServiceControlPageVm : BaseVm
         {
             IsBusy = false;
         }
-    }
-    private void UpdateHistory()
-    {
-        History.Clear();
-        var history = _kiosk.History.Concat(_toll.History).OrderByDescending(item => item.Timestamp);
-        foreach (var item in history) History.Add(item);
     }
 
     private async void SetActiveState(bool value)

@@ -2,8 +2,6 @@
 using Android.Content;
 using Android.Content.PM;
 
-using ParkingBot.Services;
-
 namespace ParkingBot;
 
 [Activity(
@@ -23,12 +21,6 @@ public class MainActivity : MauiAppCompatActivity
 {
     protected override void OnActivityResult(int requestCode, Result resultCode, Intent? data)
     {
-        if (requestCode == AuthService.CHOOSE_ACCOUNT)
-        {
-            var aName = data?.GetStringExtra("KEY_ACCOUNT_NAME");
-            var aType = data?.GetStringExtra("KEY_ACCOUNT_TYPE");
-            AuthService.SelectedAccount.OnNext(new AuthService.AccountNameAndType { Name = aName, Type = aType });
-        }
         base.OnActivityResult(requestCode, resultCode, data);
     }
 }

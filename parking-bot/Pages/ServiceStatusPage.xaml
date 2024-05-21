@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ParkingBot.ViewModels"
+             xmlns:p="clr-namespace:ParkingBot.Properties"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:DataType="vm:ServiceStatusPageVm"
+             Loaded="ContentPage_Loaded"
+             x:Class="ParkingBot.Pages.ServiceStatusPage"
+             Title="{Binding Title}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="{x:Static p:Lang.settings}" Order="Secondary"
+                    Clicked="Settings_Clicked" />
+        <ToolbarItem Text="{x:Static p:Lang.about}" Order="Secondary"
+                    Clicked="About_Clicked" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView HorizontalOptions="Fill" VerticalOptions="Fill">
+        <Grid RowDefinitions="*" ColumnDefinitions="*"
+            HorizontalOptions="Fill" VerticalOptions="Fill">
+            
+            <IndicatorView Grid.Row="0" Grid.Column="0" IsVisible="{Binding IsBusy}" HorizontalOptions="Center" VerticalOptions="Center"/>
+
+            <VerticalStackLayout HorizontalOptions="Fill" VerticalOptions="FillAndExpand" Spacing="20">
+
+                <!-- debug -->
+                <Label FontAttributes="Bold" FontSize="Title" Text="{Binding RegionName}" IsVisible="{Binding HasRegion}" HorizontalOptions="Center"/>
+
+                <!-- device -->
+                <Frame HorizontalOptions="Fill" Grid.Column="0">
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                        <Label Text="Connected Device" FontSize="Subtitle" HorizontalOptions="Center" Grid.Row="0" />
+                        <Label Text="none" HorizontalOptions="Center" Grid.Row="1" />
+
+                        <ImageButton Source="settings.svg" HorizontalOptions="End" Padding="1" Grid.Column="1" Grid.RowSpan="2"
+                                     Clicked="ManageDevices_Clicked"/>
+                    </Grid>
+                </Frame>
+
+
+                <!-- service status -->
+                <Frame HorizontalOptions="Fill">
+                    <StackLayout>
+                        <Label Text="{Static p:Lang.auto_parking}" FontSize="Subtitle" HorizontalOptions="Center" />
+                        <Switch IsToggled="{Binding IsActive, Mode=TwoWay}" Scale="1" HorizontalOptions="Center" />
+                    </StackLayout>
+                </Frame>
+
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>

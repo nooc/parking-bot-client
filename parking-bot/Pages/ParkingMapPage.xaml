@@ -6,11 +6,7 @@
              x:Class="ParkingBot.Pages.ParkingMapPage"
              x:DataType="vm:ParkingMapPageVm"
              Title="{Binding Title}">
-    
-    <ContentPage.BindingContext>
-        <vm:ParkingMapPageVm />
-    </ContentPage.BindingContext>
-    
+   
     <Grid
         ColumnDefinitions="*"
         RowDefinitions="*,Auto"
