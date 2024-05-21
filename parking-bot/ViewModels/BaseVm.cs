@@ -7,7 +7,15 @@ public abstract class BaseVm : INotifyPropertyChanged
 {
     private bool isBusy = false;
 
+    public Command LoadModelCommand { get; }
     public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected BaseVm()
+    {
+        LoadModelCommand = new Command(ExecuteLoadModelCommand);
+    }
+
+    protected abstract void ExecuteLoadModelCommand();
 
     public bool IsBusy
     {

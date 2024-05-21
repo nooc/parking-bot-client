@@ -205,6 +205,15 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Feature not supported.
+        /// </summary>
+        internal static string not_supported_msg {
+            get {
+                return ResourceManager.GetString("not_supported_msg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Off.
         /// </summary>
         internal static string off {
@@ -246,6 +255,15 @@ namespace ParkingBot.Properties {
         internal static string perm_not_met {
             get {
                 return ResourceManager.GetString("perm_not_met", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Permission error.
+        /// </summary>
+        internal static string permission_error_msg {
+            get {
+                return ResourceManager.GetString("permission_error_msg", resourceCulture);
             }
         }
         

@@ -16,7 +16,7 @@ public partial class App : Application
         MainPage = new NavigationPage(mainPage);
     }
 
-    protected override async void OnStart()
+    protected override void OnStart()
     {
         base.OnStart();
 

@@ -42,6 +42,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<EmbeddedResource Update="Properties\Lang.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Lang.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Google.Apis.PlayIntegrity.v1" Version="1.68.0.3400" />
 		<PackageReference Include="Mapsui.Maui" Version="4.1.5" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.21" />
@@ -59,13 +66,21 @@
 	  <Compile Update="Pages\MainPage.xaml.cs">
 	    <DependentUpon>MainPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Pages\ServiceControlPage.xaml.cs">
-	    <DependentUpon>ServiceControlPage.xaml</DependentUpon>
+	  <Compile Update="Pages\ServiceStatusPage.xaml.cs">
+	    <DependentUpon>ServiceStatusPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Properties\Lang.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Lang.resx</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <MauiXaml Update="Pages\HistoryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\ManageDevicesPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
@@ -74,4 +89,5 @@
 	  <Folder Include="Map\" />
 	</ItemGroup>
 
+	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionparkingbotHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 </Project>

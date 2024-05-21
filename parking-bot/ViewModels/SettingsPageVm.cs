@@ -32,13 +32,7 @@ public class SettingsPageVm : BaseVm
     public string ReminderStateLabel => _SendReminder ? Lang.on : Lang.off;
     public string SmsStateLabel => _SmsParking ? Lang.on : Lang.off;
 
-    public SettingsPageVm()
-    {
-        _LicensePlate = Preferences.Get(Values.PARKING_LICENSEPLATE_KEY, null);
-        _PhoneNumber = Preferences.Get(Values.PARKING_PHONE_KEY, null);
-        _SendReminder = Preferences.Get(Values.PARKING_REMINDER_KEY, false);
-        _SmsParking = Preferences.Get(Values.PARKING_USE_SMS_PARKING_KEY, false);
-    }
+    public SettingsPageVm() : base() { }
 
     private void StoreStringProperty(string? _val, string propertyName)
     {
@@ -47,5 +41,13 @@ public class SettingsPageVm : BaseVm
     private void StorBoolProperty(bool _val, string propertyName)
     {
         Preferences.Set(propertyName, _val);
+    }
+
+    protected override void ExecuteLoadModelCommand()
+    {
+        _LicensePlate = Preferences.Get(Values.PARKING_LICENSEPLATE_KEY, null);
+        _PhoneNumber = Preferences.Get(Values.PARKING_PHONE_KEY, null);
+        _SendReminder = Preferences.Get(Values.PARKING_REMINDER_KEY, false);
+        _SmsParking = Preferences.Get(Values.PARKING_USE_SMS_PARKING_KEY, false);
     }
 }

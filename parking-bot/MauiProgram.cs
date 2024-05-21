@@ -45,24 +45,27 @@ public static class MauiProgram
             .AddSingleton<ParkingSettingsFactoryService>()
             // Services
             .AddSingleton<UserAuthService>()
-
+            .AddSingleton<VehicleBluetoothService>()
             .AddSingleton<KioskParkingService>()
             .AddSingleton<TollParkingService>()
             .AddSingleton<GeoFencingService>()
             .AddSingleton<ServiceHelperService>()
             .AddSingleton<SmsService>()
             // ViewModels
-            .AddSingleton<ServiceControlPageVm>()
+            .AddSingleton<MainPageVm>()
+            .AddSingleton<ServiceStatusPageVm>()
             .AddSingleton<ParkingMapPageVm>()
             .AddSingleton<SettingsPageVm>()
             .AddSingleton<HistoryPageVm>()
+            .AddSingleton<ManageDevicesPageVm>()
             // Views
             .AddTransient<ParkingMapPage>()
-            .AddTransient<ServiceControlPage>()
+            .AddTransient<ServiceStatusPage>()
             .AddTransient<HistoryPage>()
             .AddTransient<SettingsPage>()
             .AddTransient<AboutPage>()
             .AddTransient<MainPage>()
+            .AddTransient<ManageDevicesPage>()
         ;
 
 #if DEBUG

@@ -213,4 +213,10 @@
   <data name="sms_parking_started_in" xml:space="preserve">
     <value>SMS parkering startad i</value>
   </data>
+  <data name="not_supported_msg" xml:space="preserve">
+    <value>Funktionen stöds inte</value>
+  </data>
+  <data name="permission_error_msg" xml:space="preserve">
+    <value>Rättighetsfel</value>
+  </data>
 </root>

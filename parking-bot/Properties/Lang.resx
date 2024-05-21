@@ -202,4 +202,10 @@
   <data name="sms_parking_started_in" xml:space="preserve">
     <value>SMS parking started in</value>
   </data>
+  <data name="not_supported_msg" xml:space="preserve">
+    <value>Feature not supported</value>
+  </data>
+  <data name="permission_error_msg" xml:space="preserve">
+    <value>Permission error</value>
+  </data>
 </root>

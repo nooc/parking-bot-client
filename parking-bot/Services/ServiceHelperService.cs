@@ -1,6 +1,7 @@
 ﻿using ParkingBot.Properties;
 
 using Shiny;
+using Shiny.BluetoothLE;
 using Shiny.Jobs;
 using Shiny.Locations;
 
@@ -14,14 +15,16 @@ public class ServiceHelperService
     private readonly IGeofenceManager _geo;
     private readonly IGpsManager _gps;
     private readonly IJobManager _job;
+    private readonly IBleManager _ble;
     private readonly TollParkingService _sms;
 
-    public ServiceHelperService(IGeofenceManager geoFencer, IGpsManager gpsManager, IJobManager jobManager, TollParkingService sms)
+    public ServiceHelperService(IGeofenceManager geoFencer, IGpsManager gpsManager, IJobManager jobManager, IBleManager ble, TollParkingService sms)
     {
         _geo = geoFencer;
         _gps = gpsManager;
         _job = jobManager;
         _sms = sms;
+        _ble = ble;
 
         phoneRe = new("^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$");
     }
@@ -49,17 +52,37 @@ public class ServiceHelperService
 
     public async Task<bool> RequestAccess()
     {
-        var jobaccess = await _job.RequestAccess();
-        var geoaccess = await _geo.RequestAccess();
-        var gpsaccess = await _gps.RequestAccess(GpsRequest.Realtime(true));
-        if (geoaccess != AccessState.Available || gpsaccess != AccessState.Available
-            || jobaccess != AccessState.Available)
+        try
+        {
+            AssertAccessState("Bluetooth", _ble.RequestAccessAsync());
+            AssertAccessState("Background Jobs", _job.RequestAccess());
+            AssertAccessState("Location", _geo.RequestAccess());
+            AssertAccessState("Gps", _gps.RequestAccess(GpsRequest.Realtime(true)));
+        }
+        catch (Exception ex)
         {
             if (Application.Current?.MainPage is Page page)
-                await page.DisplayAlert(Lang.insuf_perm, Lang.perm_not_met, Lang.exit);
+            {
+                await page.DisplayAlert(Lang.insuf_perm, ex.Message, Lang.exit);
+            }
             return false;
         }
         return true;
+    }
+
+    private async void AssertAccessState(string source, Task<AccessState> statusTask)
+    {
+        var status = await statusTask;
+        switch (status)
+        {
+            case AccessState.Available:
+                return;
+            case AccessState.NotSupported:
+            case AccessState.NotSetup:
+                throw new NotSupportedException($"{source}: {Lang.not_supported_msg}");
+            default:
+                throw new Shiny.PermissionException($"{source}: {Lang.permission_error_msg}", status);
+        }
     }
 
     public async Task StopAll()

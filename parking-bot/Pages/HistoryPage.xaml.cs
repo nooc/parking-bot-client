@@ -1,9 +1,15 @@
+using ParkingBot.ViewModels;
+
 namespace ParkingBot.Pages;
 
 public partial class HistoryPage : ContentPage
 {
-	public HistoryPage()
-	{
-		InitializeComponent();
-	}
+    private readonly HistoryPageVm Vm;
+
+    public HistoryPage(HistoryPageVm viewModel)
+    {
+        InitializeComponent();
+
+        BindingContext = Vm = viewModel; ;
+    }
 }

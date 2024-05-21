@@ -2,8 +2,11 @@
 
 public class MainPageVm : BaseVm
 {
-    public MainPageVm()
+    public MainPageVm() : base()
     {
+    }
 
+    protected override void ExecuteLoadModelCommand()
+    {
     }
 }
