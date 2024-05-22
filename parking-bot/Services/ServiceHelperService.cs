@@ -1,4 +1,5 @@
-﻿using ParkingBot.Properties;
+﻿using ParkingBot.Exceptions;
+using ParkingBot.Properties;
 
 using Shiny;
 using Shiny.BluetoothLE;
@@ -50,27 +51,15 @@ public class ServiceHelperService
 
     }
 
-    public async Task<bool> RequestAccess()
+    public void RequestAccess()
     {
-        try
-        {
-            AssertAccessState("Bluetooth", _ble.RequestAccessAsync());
-            AssertAccessState("Background Jobs", _job.RequestAccess());
-            AssertAccessState("Location", _geo.RequestAccess());
-            AssertAccessState("Gps", _gps.RequestAccess(GpsRequest.Realtime(true)));
-        }
-        catch (Exception ex)
-        {
-            if (Application.Current?.MainPage is Page page)
-            {
-                await page.DisplayAlert(Lang.insuf_perm, ex.Message, Lang.exit);
-            }
-            return false;
-        }
-        return true;
+        AssertAccessState("Bluetooth", _ble.RequestAccessAsync());
+        AssertAccessState("Background Jobs", _job.RequestAccess());
+        AssertAccessState("Location", _geo.RequestAccess());
+        AssertAccessState("Gps", _gps.RequestAccess(GpsRequest.Realtime(true)));
     }
 
-    private async void AssertAccessState(string source, Task<AccessState> statusTask)
+    private static async void AssertAccessState(string source, Task<AccessState> statusTask)
     {
         var status = await statusTask;
         switch (status)
@@ -79,9 +68,9 @@ public class ServiceHelperService
                 return;
             case AccessState.NotSupported:
             case AccessState.NotSetup:
-                throw new NotSupportedException($"{source}: {Lang.not_supported_msg}");
+                throw new ApplicationPermissionError(source, Lang.not_supported_msg);
             default:
-                throw new Shiny.PermissionException($"{source}: {Lang.permission_error_msg}", status);
+                throw new ApplicationPermissionError(source, Lang.permission_error_msg);
         }
     }
 

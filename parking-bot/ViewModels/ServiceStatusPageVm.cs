@@ -13,8 +13,6 @@ public class ServiceStatusPageVm : BaseVm
     private readonly TollParkingService _toll;
     private readonly ILogger _logger;
 
-    public string Title => "TITLE";
-
     private ISiteInfo? Info = null;
     public bool IsActive
     {

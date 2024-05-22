@@ -16,9 +16,4 @@ public partial class MainPage : TabbedPage
         Children.Add(pmp);
         Children.Add(hp);
     }
-
-    protected override async void OnAppearing()
-    {
-        await Services.RequestAccess();
-    }
 }

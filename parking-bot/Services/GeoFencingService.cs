@@ -1,5 +1,8 @@
-﻿using ParkingBot.Factories;
+﻿using ParkingBot.Exceptions;
+using ParkingBot.Factories;
 using ParkingBot.Models.Parking;
+using ParkingBot.Properties;
+
 using Shiny;
 using Shiny.Locations;
 
@@ -13,15 +16,15 @@ public class GeoFencingService
         public GeofenceState State = GeofenceState.Unknown;
     }
 
-    private readonly ServiceHelperService _access;
+    private readonly ServiceHelperService _helper;
     private readonly IGeofenceManager _geo;
     private readonly ParkingSettings _parkingSettings;
     private readonly List<GeofenceRegion> _regions = [];
     public bool IsGeoFencing => _geo.GetMonitorRegions().Count != 0;
 
-    public GeoFencingService(IGeofenceManager geofencer, ServiceHelperService access, ParkingSettingsFactoryService parkingSettings)
+    public GeoFencingService(IGeofenceManager geofencer, ServiceHelperService helper, ParkingSettingsFactoryService parkingSettings)
     {
-        _access = access;
+        _helper = helper;
         _geo = geofencer;
         _parkingSettings = parkingSettings.Instance;
         if (_parkingSettings.Kiosk != null && _parkingSettings.Kiosk.Sites != null)
@@ -40,9 +43,22 @@ public class GeoFencingService
     {
         if (enable)
         {
-            var hasAccess = await _access.RequestAccess();
-            var hasPrereq = await _access.HasSettingsPrerequisites();
-            if (!(hasPrereq && hasAccess)) return false;
+            try
+            {
+                _helper.RequestAccess();
+            }
+            catch (ApplicationPermissionError e)
+            {
+                var page = Application.Current?.MainPage;
+                if (page != null)
+                {
+                    await page.DisplayAlert(Lang.insuf_perm, e.Message, Lang.exit);
+                }
+                return false;
+            }
+
+            var hasPrereq = await _helper.HasSettingsPrerequisites();
+            if (!hasPrereq) return false;
 
             List<Task> startTasks = [];
             _regions.ForEach(r => startTasks.Add(_geo.StartMonitoring(r)));
@@ -51,7 +67,7 @@ public class GeoFencingService
         }
         else
         {
-            await _access.StopAll();
+            await _helper.StopAll();
             return true;
         }
     }

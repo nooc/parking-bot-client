@@ -7,7 +7,7 @@
              x:DataType="vm:ServiceStatusPageVm"
              Loaded="ContentPage_Loaded"
              x:Class="ParkingBot.Pages.ServiceStatusPage"
-             Title="{Binding Title}">
+             Title="{Static p:Lang.service}">
 
     <ContentPage.Resources>
         <ResourceDictionary>

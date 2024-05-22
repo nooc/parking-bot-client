@@ -2,9 +2,10 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:ParkingBot.ViewModels"
+             xmlns:p="clr-namespace:ParkingBot.Properties"
              x:Class="ParkingBot.Pages.HistoryPage"
              x:DataType="vm:HistoryPageVm"
-             Title="{Binding Title}">
+             Title="{Static p:Lang.history}">
 
     <VerticalStackLayout HorizontalOptions="Fill">
         <ListView ItemsSource="{Binding History}" SelectionMode="None" />

@@ -219,4 +219,19 @@
   <data name="permission_error_msg" xml:space="preserve">
     <value>Rättighetsfel</value>
   </data>
+  <data name="service" xml:space="preserve">
+    <value>Tjänst</value>
+  </data>
+  <data name="map" xml:space="preserve">
+    <value>Karta</value>
+  </data>
+  <data name="status_" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="manage_dev" xml:space="preserve">
+    <value>Hantera BT Enheter</value>
+  </data>
+  <data name="dev_list" xml:space="preserve">
+    <value>Registrerade Enheter</value>
+  </data>
 </root>

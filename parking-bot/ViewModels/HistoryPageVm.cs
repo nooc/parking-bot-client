@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
 using ParkingBot.Models.Parking;
-using ParkingBot.Properties;
 using ParkingBot.Services;
 
 using System.Collections.ObjectModel;
@@ -15,8 +14,6 @@ public class HistoryPageVm : BaseVm
     private readonly ILogger _logger;
 
     public ObservableCollection<ParkingTicket> History { get; } = [];
-
-    public string Title => Lang.history;
 
     public HistoryPageVm(ILogger<MainPageVm> logger, KioskParkingService kioskParkingService, TollParkingService tollParkingService)
         : base()

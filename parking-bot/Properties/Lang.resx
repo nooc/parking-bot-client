@@ -130,9 +130,6 @@
   <data name="sms_num" xml:space="preserve">
     <value>SMS Number</value>
   </data>
-  <data name="pate_hint" xml:space="preserve">
-    <value>ABC123</value>
-  </data>
   <data name="spaces" xml:space="preserve">
     <value>spaces</value>
   </data>
@@ -207,5 +204,17 @@
   </data>
   <data name="permission_error_msg" xml:space="preserve">
     <value>Permission error</value>
+  </data>
+  <data name="service" xml:space="preserve">
+    <value>Service</value>
+  </data>
+  <data name="map" xml:space="preserve">
+    <value>Map</value>
+  </data>
+  <data name="manage_dev" xml:space="preserve">
+    <value>Manage BT Devices</value>
+  </data>
+  <data name="dev_list" xml:space="preserve">
+    <value>Registered Devices</value>
   </data>
 </root>

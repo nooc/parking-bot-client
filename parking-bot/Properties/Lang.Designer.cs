@@ -106,6 +106,15 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Registered Devices.
+        /// </summary>
+        internal static string dev_list {
+            get {
+                return ResourceManager.GetString("dev_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ends at.
         /// </summary>
         internal static string ends_at {
@@ -178,6 +187,24 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Manage BT Devices.
+        /// </summary>
+        internal static string manage_dev {
+            get {
+                return ResourceManager.GetString("manage_dev", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Map.
+        /// </summary>
+        internal static string map {
+            get {
+                return ResourceManager.GetString("map", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No active parking.
         /// </summary>
         internal static string no_active_parking {
@@ -241,15 +268,6 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ABC123.
-        /// </summary>
-        internal static string pate_hint {
-            get {
-                return ResourceManager.GetString("pate_hint", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Permission requirements not met..
         /// </summary>
         internal static string perm_not_met {
@@ -300,6 +318,15 @@ namespace ParkingBot.Properties {
         internal static string reminder {
             get {
                 return ResourceManager.GetString("reminder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Service.
+        /// </summary>
+        internal static string service {
+            get {
+                return ResourceManager.GetString("service", resourceCulture);
             }
         }
         

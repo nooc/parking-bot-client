@@ -11,7 +11,6 @@ public class ParkingMapPageVm : BaseVm
     private string _Zoom = string.Empty;
     private Mapsui.Map? _Map;
 
-    public string Title => "Map";
     public string Zoom { get => _Zoom; set => SetProperty(ref _Zoom, value); }
     public ObservableMemoryLayer<Mapsui.UI.Maui.Pin> PinLayer { get; private set; }
     public Mapsui.Map? Map

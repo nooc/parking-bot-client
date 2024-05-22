@@ -17,27 +17,11 @@ using System.Text.Json;
 
 namespace ParkingBot.Handlers;
 
-public class MultiDelegate : IBleDelegate, IGeofenceDelegate, IGpsDelegate, INotificationDelegate
+public class MultiDelegate(ILogger<MultiDelegate> _logger, IGpsManager _gps, IGeofenceManager _geo, IJobManager _jobs,
+        ParkingSettingsFactoryService _parkingSettings, KioskParkingService _kiosk, TollParkingService _sms,
+        VehicleBluetoothService _vbt) : IBleDelegate, IGeofenceDelegate, IGpsDelegate, INotificationDelegate
 {
-    private readonly IGpsManager _gps;
-    private readonly IGeofenceManager _geo;
-    private readonly IJobManager _jobs;
-    private readonly ParkingSettings _settings;
-    private readonly KioskParkingService _kiosk;
-    private readonly TollParkingService _sms;
-    private readonly ILogger _logger;
-
-    public MultiDelegate(ILogger<MultiDelegate> logger, IGpsManager gps, IGeofenceManager geo, IJobManager jobs,
-        ParkingSettingsFactoryService parkingSettings, KioskParkingService kiosk, TollParkingService sms)
-    {
-        _logger = logger;
-        _gps = gps;
-        _geo = geo;
-        _jobs = jobs;
-        _settings = parkingSettings.Instance;
-        _kiosk = kiosk;
-        _sms = sms;
-    }
+    private ParkingSettings _settings => _parkingSettings.Instance;
 
     // NOTIFICATIONS
     public Task OnEntry(NotificationResponse response)
@@ -123,11 +107,11 @@ public class MultiDelegate : IBleDelegate, IGeofenceDelegate, IGpsDelegate, INot
     {
         if (peripheral.Status == ConnectionState.Connected)
         {
-            // TODO: Enable parking actions
+            _vbt.Connect(peripheral.Uuid, peripheral.Name);
         }
         else if (peripheral.Status == ConnectionState.Disconnected)
         {
-            // TODO: Disable parking actions
+            _vbt.Disconnect(peripheral.Uuid);
         }
 
         return Task.CompletedTask;

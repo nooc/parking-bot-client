@@ -38,6 +38,7 @@ public static class MauiProgram
         isc.AddGps<MultiDelegate>()
             .AddGeofencing<MultiDelegate>()
             .AddNotifications<MultiDelegate>()
+            .AddBluetoothLE<MultiDelegate>()
             .AddJobs()
             // Clients
             .AddSingleton(GetHttpClient())
@@ -66,6 +67,8 @@ public static class MauiProgram
             .AddTransient<AboutPage>()
             .AddTransient<MainPage>()
             .AddTransient<ManageDevicesPage>()
+            // Startup
+            .AddShinyService<PostInjetStartupService>()
         ;
 
 #if DEBUG
