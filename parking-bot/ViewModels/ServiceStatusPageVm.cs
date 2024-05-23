@@ -11,7 +11,6 @@ public class ServiceStatusPageVm : BaseVm
     private readonly GeoFencingService _geo;
     private readonly KioskParkingService _kiosk;
     private readonly TollParkingService _toll;
-    private readonly ILogger _logger;
 
     private ISiteInfo? Info = null;
     public bool IsActive
@@ -28,10 +27,9 @@ public class ServiceStatusPageVm : BaseVm
 
     public ServiceStatusPageVm(ILogger<MainPageVm> logger, GeoFencingService geofencingService,
         KioskParkingService kioskParkingService, TollParkingService smsParkingService)
-        : base()
+        : base(logger)
     {
         _geo = geofencingService;
-        _logger = logger;
         _kiosk = kioskParkingService;
         _toll = smsParkingService;
 
@@ -45,57 +43,45 @@ public class ServiceStatusPageVm : BaseVm
 
     protected async override void ExecuteLoadModelCommand()
     {
-        IsBusy = true;
-        try
+        UserGreeting = $"{Lang.hello} {Preferences.Get(Values.TOKEN_USER_KEY, string.Empty)}";
+
+        KioskSite? site;
+        if (_geo.IsGeoFencing) site = await _geo.GetActiveRegion();
+        else site = null;
+
+        if (site != null)
         {
-            UserGreeting = $"{Lang.hello} {Preferences.Get(Values.TOKEN_USER_KEY, string.Empty)}";
+            if (Info != null && Info.SiteId == site.SiteId)
+                Info = await _kiosk.GetSiteInfoAsync(site);
 
-            KioskSite? site;
-            if (_geo.IsGeoFencing) site = await _geo.GetActiveRegion();
-            else site = null;
-
-            if (site != null)
-            {
-                if (Info != null && Info.SiteId == site.SiteId)
-                    Info = await _kiosk.GetSiteInfoAsync(site);
-
-                RegionName = Info?.SiteName ?? string.Empty;
-                Description = Info?.SiteDescription ?? string.Empty;
-                Availability = Info?.SiteAvailability ?? string.Empty;
-                OnPropertyChanged(nameof(RegionName));
-            }
-            else
-            {
-                RegionName = string.Empty;
-                HasRegion = false;
-                Description = string.Empty;
-                Availability = Lang.not_available;
-            }
-            OnPropertyChanged(nameof(UserGreeting));
-            OnPropertyChanged(nameof(HasRegion));
-            OnPropertyChanged(nameof(Description));
-            OnPropertyChanged(nameof(Availability));
-
-            if (_kiosk.OngoingParking is ParkingTicket kticket)
-            {
-                StatusText = kticket.GetSummary();
-            }
-            else if (_toll.OngoingParking is ParkingTicket tticket)
-            {
-                StatusText = tticket.GetSummary();
-            }
-            else StatusText = Lang.no_active_parking;
-
-            OnPropertyChanged(nameof(StatusText));
+            RegionName = Info?.SiteName ?? string.Empty;
+            Description = Info?.SiteDescription ?? string.Empty;
+            Availability = Info?.SiteAvailability ?? string.Empty;
+            OnPropertyChanged(nameof(RegionName));
         }
-        catch (Exception ex)
+        else
         {
-            _logger?.LogError(ex, nameof(MainPageVm));
+            RegionName = string.Empty;
+            HasRegion = false;
+            Description = string.Empty;
+            Availability = Lang.not_available;
         }
-        finally
+        OnPropertyChanged(nameof(UserGreeting));
+        OnPropertyChanged(nameof(HasRegion));
+        OnPropertyChanged(nameof(Description));
+        OnPropertyChanged(nameof(Availability));
+
+        if (_kiosk.OngoingParking is ParkingTicket kticket)
         {
-            IsBusy = false;
+            StatusText = kticket.GetSummary();
         }
+        else if (_toll.OngoingParking is ParkingTicket tticket)
+        {
+            StatusText = tticket.GetSummary();
+        }
+        else StatusText = Lang.no_active_parking;
+
+        OnPropertyChanged(nameof(StatusText));
     }
 
     private async void SetActiveState(bool value)

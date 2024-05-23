@@ -11,38 +11,24 @@ public class HistoryPageVm : BaseVm
 {
     private readonly KioskParkingService _kiosk;
     private readonly TollParkingService _toll;
-    private readonly ILogger _logger;
 
     public ObservableCollection<ParkingTicket> History { get; } = [];
 
-    public HistoryPageVm(ILogger<MainPageVm> logger, KioskParkingService kioskParkingService, TollParkingService tollParkingService)
-        : base()
+    public HistoryPageVm(ILogger<HistoryPageVm> logger, KioskParkingService kioskParkingService, TollParkingService tollParkingService)
+        : base(logger)
     {
-        _logger = logger;
         _kiosk = kioskParkingService;
         _toll = tollParkingService;
     }
 
     protected override void ExecuteLoadModelCommand()
     {
-        IsBusy = true;
-        try
-        {
-            History.Clear();
-            List<ParkingTicket> history = [];
-            history.AddRange(_kiosk.History);
-            history.AddRange(_toll.History);
-            history.Sort((a, b) => a.Timestamp.CompareTo(b.Timestamp));
-            history.ForEach(History.Add);
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex, nameof(HistoryPageVm));
-        }
-        finally
-        {
-            IsBusy = false;
-        }
+        History.Clear();
+        List<ParkingTicket> history = [];
+        history.AddRange(_kiosk.History);
+        history.AddRange(_toll.History);
+        history.Sort((a, b) => a.Timestamp.CompareTo(b.Timestamp));
+        history.ForEach(History.Add);
     }
 
     private void UpdateHistory()

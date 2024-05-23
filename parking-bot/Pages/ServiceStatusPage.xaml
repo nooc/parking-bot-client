@@ -38,7 +38,7 @@
                         <Label Text="Connected Device" FontSize="Subtitle" HorizontalOptions="Center" Grid.Row="0" />
                         <Label Text="none" HorizontalOptions="Center" Grid.Row="1" />
 
-                        <ImageButton Source="settings.svg" HorizontalOptions="End" Padding="1" Grid.Column="1" Grid.RowSpan="2"
+                        <ImageButton Style="{DynamicResource settingsButton}" HorizontalOptions="End" Grid.Column="1" Grid.RowSpan="2"
                                      Clicked="ManageDevices_Clicked"/>
                     </Grid>
                 </Frame>

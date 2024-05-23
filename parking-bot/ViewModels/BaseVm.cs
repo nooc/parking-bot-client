@@ -1,21 +1,41 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.Extensions.Logging;
+
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace ParkingBot.ViewModels;
 
 public abstract class BaseVm : INotifyPropertyChanged
 {
+    protected readonly ILogger _logger;
     private bool isBusy = false;
 
     public Command LoadModelCommand { get; }
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    protected BaseVm()
+    protected BaseVm(ILogger logger)
     {
+        _logger = logger;
         LoadModelCommand = new Command(ExecuteLoadModelCommand);
     }
 
     protected abstract void ExecuteLoadModelCommand();
+    private void _ExecuteLoadModelCommand()
+    {
+        isBusy = true;
+        try
+        {
+            ExecuteLoadModelCommand();
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, message: null);
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
 
     public bool IsBusy
     {

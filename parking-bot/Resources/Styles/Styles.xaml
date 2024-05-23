@@ -433,4 +433,50 @@
         <Setter Property="SelectedTabColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray200}}" />
     </Style>
 
+    <Style x:Key="featherImageButton" TargetType="ImageButton" ApplyToDerivedTypes="False">
+        <Setter Property="Opacity" Value="1" />
+        <Setter Property="Padding" Value="2" />
+        <Setter Property="BorderColor" Value="Grey"/>
+        <Setter Property="BorderWidth" Value="1"/>
+        <Setter Property="CornerRadius" Value="5"/>
+        <Setter Property="MinimumHeightRequest" Value="32"/>
+        <Setter Property="MinimumWidthRequest" Value="44"/>
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.5" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PointerOver" />
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray900}}" />
+    </Style>
+
+    <Style x:Key="settingsButton" TargetType="ImageButton" BasedOn="{StaticResource featherImageButton}">
+        <Setter Property="Source" Value="{AppThemeBinding Light='settings_white.svg', Dark='settings_black.svg'}" />
+    </Style>
+    <Style x:Key="minusButton" TargetType="ImageButton" BasedOn="{StaticResource featherImageButton}">
+        <Setter Property="Source" Value="{AppThemeBinding Light='minus_white.svg', Dark='minus_black.svg'}" />
+    </Style>
+    <Style x:Key="plusButton" TargetType="ImageButton" BasedOn="{StaticResource featherImageButton}">
+        <Setter Property="Source" Value="{AppThemeBinding Light='plus_white.svg', Dark='plus_black.svg'}" />
+    </Style>
+    <Style x:Key="editButton" TargetType="ImageButton" BasedOn="{StaticResource featherImageButton}">
+        <Setter Property="Source" Value="{AppThemeBinding Light='edit_white.svg', Dark='edit_black.svg'}" />
+    </Style>
+    <Style x:Key="solidLabel" TargetType="Label">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray900}}" />
+        <Setter Property="FontSize" Value="Large" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
+        <Setter Property="HorizontalOptions" Value="Fill" />
+        <Setter Property="Margin" Value="0" />
+    </Style>
+
 </ResourceDictionary>

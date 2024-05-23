@@ -234,4 +234,13 @@
   <data name="dev_list" xml:space="preserve">
     <value>Registrerade Enheter</value>
   </data>
+  <data name="reg_dev_list" xml:space="preserve">
+    <value>Registrerade Enheter</value>
+  </data>
+  <data name="pair_dev_list" xml:space="preserve">
+    <value>Parkopplade Enheter</value>
+  </data>
+  <data name="manage_device_text" xml:space="preserve">
+    <value>Lägg till elelr ta bort registrerade enheter. För att registrera en enhet behöver den vara parkopplad till denna enhet.</value>
+  </data>
 </root>

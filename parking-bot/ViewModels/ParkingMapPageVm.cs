@@ -7,7 +7,6 @@ namespace ParkingBot.ViewModels;
 
 public class ParkingMapPageVm : BaseVm
 {
-    private readonly ILogger<MainPageVm> _logger;
     private string _Zoom = string.Empty;
     private Mapsui.Map? _Map;
 
@@ -33,9 +32,8 @@ public class ParkingMapPageVm : BaseVm
     }
     public MyLocationLayer? LocationLayer { get; internal set; }
 
-    public ParkingMapPageVm(ILogger<MainPageVm> logger) : base()
+    public ParkingMapPageVm(ILogger<ParkingMapPageVm> logger) : base(logger)
     {
-        _logger = logger;
         PinLayer = new(p => p.Feature)
         {
             Style = SymbolStyles.CreatePinStyle(symbolScale: 0.7)
@@ -54,18 +52,6 @@ public class ParkingMapPageVm : BaseVm
     }
     protected override void ExecuteLoadModelCommand()
     {
-        IsBusy = true;
-        try
-        {
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex, nameof(ParkingMapPageVm));
-        }
-        finally
-        {
-            IsBusy = false;
-        }
     }
 
     private void UpdateLocation()

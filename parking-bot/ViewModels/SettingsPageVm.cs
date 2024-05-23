@@ -1,4 +1,6 @@
-﻿using ParkingBot.Properties;
+﻿using Microsoft.Extensions.Logging;
+
+using ParkingBot.Properties;
 
 namespace ParkingBot.ViewModels;
 
@@ -32,7 +34,7 @@ public class SettingsPageVm : BaseVm
     public string ReminderStateLabel => _SendReminder ? Lang.on : Lang.off;
     public string SmsStateLabel => _SmsParking ? Lang.on : Lang.off;
 
-    public SettingsPageVm() : base() { }
+    public SettingsPageVm(ILogger<SettingsPageVm> logger) : base(logger) { }
 
     private void StoreStringProperty(string? _val, string propertyName)
     {

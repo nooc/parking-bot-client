@@ -217,4 +217,13 @@
   <data name="dev_list" xml:space="preserve">
     <value>Registered Devices</value>
   </data>
+  <data name="reg_dev_list" xml:space="preserve">
+    <value>Registered Devices</value>
+  </data>
+  <data name="pair_dev_list" xml:space="preserve">
+    <value>Paired Devices</value>
+  </data>
+  <data name="manage_device_text" xml:space="preserve">
+    <value>Add or remove registered devices. To register a device it has to be paired to this device.</value>
+  </data>
 </root>

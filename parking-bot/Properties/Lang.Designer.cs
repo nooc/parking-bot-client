@@ -196,6 +196,15 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add or remove registered devices. To register a device it has to be paired to this device..
+        /// </summary>
+        internal static string manage_device_text {
+            get {
+                return ResourceManager.GetString("manage_device_text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Map.
         /// </summary>
         internal static string map {
@@ -259,6 +268,15 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Paired Devices.
+        /// </summary>
+        internal static string pair_dev_list {
+            get {
+                return ResourceManager.GetString("pair_dev_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Parking started. Ends at.
         /// </summary>
         internal static string parking_started_ends_at {
@@ -309,6 +327,15 @@ namespace ParkingBot.Properties {
         internal static string plate_format_error {
             get {
                 return ResourceManager.GetString("plate_format_error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registered Devices.
+        /// </summary>
+        internal static string reg_dev_list {
+            get {
+                return ResourceManager.GetString("reg_dev_list", resourceCulture);
             }
         }
         
