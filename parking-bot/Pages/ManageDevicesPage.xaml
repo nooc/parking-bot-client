@@ -12,8 +12,8 @@
     <VerticalStackLayout HorizontalOptions="Center" Spacing="10">
 
         <Label Text="{Static p:Lang.manage_device_text}" FontSize="Body" Margin="7" />
-        
-        <Label Text="{Static p:Lang.reg_dev_list}" Style="{DynamicResource solidLabel}" />
+
+        <Label Text="{Static p:Lang.reg_dev_list}" Style="{DynamicResource SettingsLabel}" />
 
         <CollectionView x:Name="RegList" ItemsSource="{Binding RegisteredCars}" HorizontalOptions="Fill">
             <CollectionView.ItemTemplate>
@@ -28,7 +28,7 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <Label Text="{Static p:Lang.pair_dev_list}" Style="{DynamicResource solidLabel}" />
+        <Label Text="{Static p:Lang.pair_dev_list}" Style="{DynamicResource SettingsLabel}" />
 
         <CollectionView x:Name="PairList" ItemsSource="{Binding PairedDevices}" HorizontalOptions="Fill">
             <CollectionView.ItemTemplate>

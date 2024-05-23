@@ -469,14 +469,5 @@
     <Style x:Key="editButton" TargetType="ImageButton" BasedOn="{StaticResource featherImageButton}">
         <Setter Property="Source" Value="{AppThemeBinding Light='edit_white.svg', Dark='edit_black.svg'}" />
     </Style>
-    <Style x:Key="solidLabel" TargetType="Label">
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray900}}" />
-        <Setter Property="FontSize" Value="Large" />
-        <Setter Property="FontAttributes" Value="Bold" />
-        <Setter Property="HorizontalTextAlignment" Value="Center" />
-        <Setter Property="HorizontalOptions" Value="Fill" />
-        <Setter Property="Margin" Value="0" />
-    </Style>
 
 </ResourceDictionary>

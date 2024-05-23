@@ -10,19 +10,16 @@
     <ScrollView HorizontalOptions="Fill" VerticalOptions="Fill">
         <VerticalStackLayout HorizontalOptions="Fill" VerticalOptions="Fill">
 
-            <Label Style="{DynamicResource SettingsLabel}" Text="{Static p:Lang.vehicle}" />
-            <Entry Margin="15,0,0,0" Text="{Binding LicensePlate,Mode=TwoWay}" FontSize="Large" Placeholder="{Static p:Lang.license_plate}"
-                   SemanticProperties.Hint="{Static p:Lang.license_plate}" HorizontalOptions="Fill" />
-
-            <Label Style="{DynamicResource SettingsLabel}" Text="{Static p:Lang.reminder}" />
-            <Entry Margin="15,0,0,0" Text="{Binding PhoneNumber,Mode=TwoWay}" FontSize="Large" Placeholder="{Static p:Lang.sms_num}"
-                   SemanticProperties.Hint="{Static p:Lang.sms_num}" HorizontalOptions="Fill" />
+            <Label Style="{DynamicResource SettingsLabel}" Text="{Static p:Lang.sms_num}" />
+            <Label FontSize="Body" Text="{Static p:Lang.sms_prereq}" />
+            <Entry Margin="15,0,0,0" Text="{Binding PhoneNumber,Mode=TwoWay}" FontSize="Large" Placeholder="{Static p:Lang.phone_hint}"
+                   SemanticProperties.Hint="{Static p:Lang.phone_hint}" HorizontalOptions="Fill" />
             <HorizontalStackLayout HorizontalOptions="Center">
                 <Switch IsToggled="{Binding SendReminder,Mode=TwoWay}" HorizontalOptions="Start"/>
                 <Label Text="{Binding ReminderStateLabel}" HorizontalOptions="End" VerticalOptions="Center" />
             </HorizontalStackLayout>
 
-            <Label Style="{DynamicResource SettingsLabel}" Text="{Static p:Lang.sms_parking}" />
+            <Label Style="{DynamicResource SettingsLabel}" Text="{Static p:Lang.kiosk_parking}" />
             <HorizontalStackLayout HorizontalOptions="Center">
                 <Switch IsToggled="{Binding SmsParking,Mode=TwoWay}" HorizontalOptions="Start"/>
                 <Label Text="{Binding SmsStateLabel}" HorizontalOptions="End" VerticalOptions="Center" />

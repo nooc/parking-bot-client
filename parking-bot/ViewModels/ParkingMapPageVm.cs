@@ -1,4 +1,5 @@
-﻿using Mapsui.Layers;
+﻿using Mapsui;
+using Mapsui.Layers;
 using Mapsui.Styles;
 
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,7 @@ public class ParkingMapPageVm : BaseVm
     private Mapsui.Map? _Map;
 
     public string Zoom { get => _Zoom; set => SetProperty(ref _Zoom, value); }
-    public ObservableMemoryLayer<Mapsui.UI.Maui.Pin> PinLayer { get; private set; }
+    public MemoryLayer FeatureLayer { get; private set; }
     public Mapsui.Map? Map
     {
         get => _Map;
@@ -24,7 +25,7 @@ public class ParkingMapPageVm : BaseVm
                 //MapCtrl.Zoomed += MapCtrl_Zoomed;
                 Zoom = $"{_Map.Navigator?.Viewport.Resolution}";
                 LocationLayer = new MyLocationLayer(_Map);
-                _Map.Layers.Add(PinLayer);
+                _Map.Layers.Add(FeatureLayer);
                 _Map.Layers.Add(LocationLayer);
                 UpdateLocation();
             }
@@ -34,20 +35,19 @@ public class ParkingMapPageVm : BaseVm
 
     public ParkingMapPageVm(ILogger<ParkingMapPageVm> logger) : base(logger)
     {
-        PinLayer = new(p => p.Feature)
-        {
-            Style = SymbolStyles.CreatePinStyle(symbolScale: 0.7)
-        };
+        var (x, y) = Mapsui.Projections.SphericalMercator.FromLonLat(12.031604859973248, 57.73637027332549);
+        IFeature[] features = [
+            new PointFeature(x,y)
+            {
+                Styles = [SymbolStyles.CreatePinStyle(symbolScale: 0.7)],
 
-        //TODO: remove hard coded
-        PinLayer.ObservableCollection = new System.Collections.ObjectModel.ObservableCollection<Mapsui.UI.Maui.Pin>
+            },
+        ];
+        FeatureLayer = new MemoryLayer
         {
-            new() {
-                Position=new Mapsui.UI.Maui.Position(57.73637027332549, 12.031604859973248),
-                Label = "Hello",
-                Type = Mapsui.UI.Maui.PinType.Pin,
-                IsVisible=true,
-            }
+            Features = features,
+            Name = "Demo",
+            Style = null,
         };
     }
     protected override void ExecuteLoadModelCommand()
@@ -67,4 +67,18 @@ public class ParkingMapPageVm : BaseVm
                 //UpdateLocation();
             });
     }
+    /*
+    private static SymbolStyle CreateSvgStyle(string mapPin, double scale)
+    {
+        if (!BitmapRegistry.Instance.TryGetBitmapId(mapPin, out var bitmapId))
+        {
+            return new SymbolStyle { BitmapId = GetSvgId(mapPin), SymbolScale = scale, SymbolOffset = new RelativeOffset(0.0, 0.5) };
+        }
+        return
+    }
+
+    private int GetSvgId(string mapPin)
+    {
+        throw new NotImplementedException();
+    }*/
 }

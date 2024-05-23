@@ -178,6 +178,15 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Kiosk Parking.
+        /// </summary>
+        internal static string kiosk_parking {
+            get {
+                return ResourceManager.GetString("kiosk_parking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to License Plate.
         /// </summary>
         internal static string license_plate {
@@ -381,15 +390,6 @@ namespace ParkingBot.Properties {
         internal static string sms_num {
             get {
                 return ResourceManager.GetString("sms_num", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to SMS Parking.
-        /// </summary>
-        internal static string sms_parking {
-            get {
-                return ResourceManager.GetString("sms_parking", resourceCulture);
             }
         }
         

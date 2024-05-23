@@ -172,9 +172,6 @@
   <data name="settings_error" xml:space="preserve">
     <value>Error in settings.</value>
   </data>
-  <data name="sms_parking" xml:space="preserve">
-    <value>SMS Parking</value>
-  </data>
   <data name="sms_prereq" xml:space="preserve">
     <value>You need to have an account with Parkering Göteborg.</value>
   </data>
@@ -225,5 +222,8 @@
   </data>
   <data name="manage_device_text" xml:space="preserve">
     <value>Add or remove registered devices. To register a device it has to be paired to this device.</value>
+  </data>
+  <data name="kiosk_parking" xml:space="preserve">
+    <value>Kiosk Parking</value>
   </data>
 </root>
