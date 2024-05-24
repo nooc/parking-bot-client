@@ -7,7 +7,7 @@ public partial class MainPage : TabbedPage
 {
     private readonly ServiceHelperService Services;
 
-    public MainPage(MainPageVm vm, ServiceStatusPage ssp, ParkingMapPage pmp, HistoryPage hp, ServiceHelperService services)
+    public MainPage(MainPageVm vm, ServiceStatusPage ssp, MapPage pmp, HistoryPage hp, ServiceHelperService services)
     {
         Services = services;
 

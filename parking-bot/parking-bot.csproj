@@ -66,6 +66,9 @@
 	  <Compile Update="Pages\MainPage.xaml.cs">
 	    <DependentUpon>MainPage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Pages\MapPage.xaml.cs">
+	    <DependentUpon>MapPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Pages\ServiceStatusPage.xaml.cs">
 	    <DependentUpon>ServiceStatusPage.xaml</DependentUpon>
 	  </Compile>

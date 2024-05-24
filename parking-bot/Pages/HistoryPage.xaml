@@ -2,13 +2,27 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:ParkingBot.ViewModels"
+             xmlns:m="clr-namespace:ParkingBot.Models.Parking"
              xmlns:p="clr-namespace:ParkingBot.Properties"
              x:Class="ParkingBot.Pages.HistoryPage"
              x:DataType="vm:HistoryPageVm"
              Title="{Static p:Lang.history}">
+    <RefreshView Command="{Binding LoadModelCommand}">
 
-    <VerticalStackLayout HorizontalOptions="Fill">
-        <ListView ItemsSource="{Binding History}" SelectionMode="None" />
-    </VerticalStackLayout>
+        <VerticalStackLayout HorizontalOptions="Fill" Spacing="10">
+            <Label Text="{Static p:Lang.history}" Style="{DynamicResource SettingsLabel}" />
+
+            <CollectionView x:Name="RegList" ItemsSource="{Binding History}" HorizontalOptions="Fill">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="m:ParkingTicket">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding Timestamp}" />
+                            <Label Text="{Binding PlateNumber}" />
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </RefreshView>
 </ContentPage>
     

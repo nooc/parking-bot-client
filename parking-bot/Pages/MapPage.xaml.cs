@@ -2,11 +2,11 @@ using ParkingBot.ViewModels;
 
 namespace ParkingBot.Pages;
 
-public partial class ParkingMapPage : ContentPage
+public partial class MapPage : ContentPage
 {
-    private readonly ParkingMapPageVm Vm;
+    private readonly MapPageVm Vm;
 
-    public ParkingMapPage(ParkingMapPageVm viewModel)
+    public MapPage(MapPageVm viewModel)
     {
         InitializeComponent();
 

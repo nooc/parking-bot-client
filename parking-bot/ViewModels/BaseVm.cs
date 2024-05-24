@@ -16,16 +16,17 @@ public abstract class BaseVm : INotifyPropertyChanged
     protected BaseVm(ILogger logger)
     {
         _logger = logger;
-        LoadModelCommand = new Command(ExecuteLoadModelCommand);
+        LoadModelCommand = new Command(_ExecuteLoadModelCommand);
     }
 
     protected abstract void ExecuteLoadModelCommand();
+
     private void _ExecuteLoadModelCommand()
     {
         isBusy = true;
         try
         {
-            ExecuteLoadModelCommand();
+            _ExecuteLoadModelCommand();
         }
         catch (Exception ex)
         {

@@ -243,4 +243,13 @@
   <data name="kiosk_parking" xml:space="preserve">
     <value>Kiosk-parkering</value>
   </data>
+  <data name="add_kiosk" xml:space="preserve">
+    <value>Lägg Till Kiosk Id</value>
+  </data>
+  <data name="exists" xml:space="preserve">
+    <value>Finns redan</value>
+  </data>
+  <data name="_already_exists_fmt" xml:space="preserve">
+    <value>{} finns redan.</value>
+  </data>
 </root>

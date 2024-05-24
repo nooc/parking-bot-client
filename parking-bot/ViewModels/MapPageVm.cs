@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ParkingBot.ViewModels;
 
-public class ParkingMapPageVm : BaseVm
+public class MapPageVm : BaseVm
 {
     private string _Zoom = string.Empty;
     private Mapsui.Map? _Map;
@@ -34,7 +34,7 @@ public class ParkingMapPageVm : BaseVm
     }
     public MyLocationLayer? LocationLayer { get; internal set; }
 
-    public ParkingMapPageVm(ILogger<ParkingMapPageVm> logger) : base(logger)
+    public MapPageVm(ILogger<MapPageVm> logger) : base(logger)
     {
         var (x, y) = Mapsui.Projections.SphericalMercator.FromLonLat(12.031604859973248, 57.73637027332549);
         IFeature[] features = [

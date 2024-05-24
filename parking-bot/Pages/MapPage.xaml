@@ -4,8 +4,8 @@
              xmlns:vm="clr-namespace:ParkingBot.ViewModels"
              xmlns:map="clr-namespace:Mapsui.UI.Maui;assembly=Mapsui.UI.Maui"
              xmlns:p="clr-namespace:ParkingBot.Properties"
-             x:Class="ParkingBot.Pages.ParkingMapPage"
-             x:DataType="vm:ParkingMapPageVm"
+             x:Class="ParkingBot.Pages.MapPage"
+             x:DataType="vm:MapPageVm"
              Title="{Static p:Lang.map}">
    
     <Grid

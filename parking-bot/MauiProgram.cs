@@ -52,12 +52,12 @@ public static class MauiProgram
             // ViewModels
             .AddSingleton<MainPageVm>()
             .AddSingleton<ServiceStatusPageVm>()
-            .AddSingleton<ParkingMapPageVm>()
+            .AddSingleton<MapPageVm>()
             .AddSingleton<SettingsPageVm>()
             .AddSingleton<HistoryPageVm>()
             .AddSingleton<ManageDevicesPageVm>()
             // Views
-            .AddTransient<ParkingMapPage>()
+            .AddTransient<MapPage>()
             .AddTransient<ServiceStatusPage>()
             .AddTransient<HistoryPage>()
             .AddTransient<SettingsPage>()

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 
 using ParkingBot.Models.Bt;
+using ParkingBot.Properties;
 using ParkingBot.Services;
 using ParkingBot.Util;
 
@@ -58,10 +59,10 @@ public class ManageDevicesPageVm : BaseVm
             {
                 var reg = await page.DisplayPromptAsync(
                     title: "Set plate number", $"Set license plate for {device.DeviceName}.",
-                    keyboard: VehicleUtils.LicensePlateKeyboard,
+                    keyboard: Values.KEYBOARD_CAPITAL,
                     placeholder: "ABC123");
                 if (reg == null) break;
-                else if (VehicleUtils.IsValidLicensePlate(reg))
+                else if (IsValidLicensePlate(reg))
                 {
                     RegisteredCars.Add(new(reg, device));
                     PairedDevices.Remove(device);
@@ -69,6 +70,10 @@ public class ManageDevicesPageVm : BaseVm
                 }
             }
         }
+    }
+    private static bool IsValidLicensePlate(string licensePlate)
+    {
+        return RegexUtils.LicensePlateRegex().IsMatch(licensePlate.Trim().ToUpper());
     }
 
     private void ExecuteUnregisterDevice(CarBtDevice device)

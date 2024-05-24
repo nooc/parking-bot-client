@@ -61,11 +61,29 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {} already exists..
+        /// </summary>
+        internal static string _already_exists_fmt {
+            get {
+                return ResourceManager.GetString("_already_exists_fmt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
         internal static string about {
             get {
                 return ResourceManager.GetString("about", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Kiosk Id.
+        /// </summary>
+        internal static string add_kiosk {
+            get {
+                return ResourceManager.GetString("add_kiosk", resourceCulture);
             }
         }
         
@@ -129,6 +147,15 @@ namespace ParkingBot.Properties {
         internal static string error {
             get {
                 return ResourceManager.GetString("error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Already present.
+        /// </summary>
+        internal static string exists {
+            get {
+                return ResourceManager.GetString("exists", resourceCulture);
             }
         }
         

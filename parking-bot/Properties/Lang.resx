@@ -226,4 +226,13 @@
   <data name="kiosk_parking" xml:space="preserve">
     <value>Kiosk Parking</value>
   </data>
+  <data name="add_kiosk" xml:space="preserve">
+    <value>Add Kiosk Id</value>
+  </data>
+  <data name="exists" xml:space="preserve">
+    <value>Already present</value>
+  </data>
+  <data name="_already_exists_fmt" xml:space="preserve">
+    <value>{} already exists.</value>
+  </data>
 </root>
