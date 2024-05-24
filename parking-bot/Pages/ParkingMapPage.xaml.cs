@@ -22,21 +22,6 @@ public partial class ParkingMapPage : ContentPage
         }
     }
 
-    /// <summary>
-    /// Limit rendering of geometry based on zoom level
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <exception cref="NotImplementedException"></exception>
-    private void MapCtrl_Zoomed(object? sender, Mapsui.UI.ZoomedEventArgs e)
-    {
-        if (MapCtrl.Map is Mapsui.Map map)
-        {
-
-        }
-        e.Handled = false;
-    }
-
     private void MapInfo(object? sender, Mapsui.MapInfoEventArgs e)
     {
     }

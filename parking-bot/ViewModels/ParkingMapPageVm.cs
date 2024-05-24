@@ -21,8 +21,9 @@ public class ParkingMapPageVm : BaseVm
             _Map = value;
             if (_Map != null)
             {
+                //_Map.Navigator.ViewChanged += Map_ViewChanged;
+                _Map.Navigator.RotationLock = true;
                 _Map.Layers.Add(Mapsui.Tiling.OpenStreetMap.CreateTileLayer(Properties.Values.USER_AGENT));
-                //MapCtrl.Zoomed += MapCtrl_Zoomed;
                 Zoom = $"{_Map.Navigator?.Viewport.Resolution}";
                 LocationLayer = new MyLocationLayer(_Map);
                 _Map.Layers.Add(FeatureLayer);
@@ -81,4 +82,16 @@ public class ParkingMapPageVm : BaseVm
     {
         throw new NotImplementedException();
     }*/
+
+    /// <summary>
+    /// Enable rendering of geometry based on zoom level.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <exception cref="NotImplementedException"></exception>
+    internal void MapCtrl_Zoomed(object? sender, Mapsui.UI.ZoomedEventArgs e)
+    {
+        Zoom = $"{_Map?.Navigator?.Viewport.Resolution}";
+        e.Handled = false;
+    }
 }

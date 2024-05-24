@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
 using ParkingBot.Background;
-using ParkingBot.Factories;
-using ParkingBot.Models.Parking;
 using ParkingBot.Properties;
 using ParkingBot.Services;
 using ParkingBot.Util;
@@ -18,11 +16,9 @@ using System.Text.Json;
 namespace ParkingBot.Handlers;
 
 public class MultiDelegate(ILogger<MultiDelegate> _logger, IGpsManager _gps, IGeofenceManager _geo, IJobManager _jobs,
-        ParkingSettingsFactoryService _parkingSettings, KioskParkingService _kiosk, TollParkingService _sms,
-        VehicleBluetoothService _vbt) : IBleDelegate, IGeofenceDelegate, IGpsDelegate, INotificationDelegate
+        KioskParkingService _kiosk, TollParkingService _sms, VehicleBluetoothService _vbt)
+    : IBleDelegate, IGeofenceDelegate, IGpsDelegate, INotificationDelegate
 {
-    private ParkingSettings _settings => _parkingSettings.Instance;
-
     // NOTIFICATIONS
     public Task OnEntry(NotificationResponse response)
     {
@@ -35,7 +31,7 @@ public class MultiDelegate(ILogger<MultiDelegate> _logger, IGpsManager _gps, IGe
     {
         _logger.LogInformation("On gps reading");
 
-        if (reading.PositionAccuracy <= _settings.MinGpsAccuracy)
+        if (reading.PositionAccuracy <= Values.GPS_MIN_ACCURACY)
         {
             // check that no ongoing parking exists
             if (_kiosk.OngoingParking == null && !_jobs.IsRunning)
@@ -50,7 +46,7 @@ public class MultiDelegate(ILogger<MultiDelegate> _logger, IGpsManager _gps, IGe
                         // get distance to region center
                         var dist = reading.Position.GetDistanceTo(region.Center);
                         // chech distance
-                        if (dist.TotalMeters <= _settings.MaxGpsDistance)
+                        if (dist.TotalMeters <= Values.GPS_MAX_DISTANCE)
                         {
                             // do parking
                             Dictionary<string, string> jobParams = new()

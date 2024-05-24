@@ -2,7 +2,6 @@
 
 using Microsoft.Extensions.Logging;
 
-using ParkingBot.Factories;
 using ParkingBot.Handlers;
 using ParkingBot.Pages;
 using ParkingBot.Services;
@@ -42,8 +41,6 @@ public static class MauiProgram
             .AddJobs()
             // Clients
             .AddSingleton(GetHttpClient())
-            // Settings
-            .AddSingleton<ParkingSettingsFactoryService>()
             // Services
             .AddSingleton<UserAuthService>()
             .AddSingleton<VehicleBluetoothService>()
