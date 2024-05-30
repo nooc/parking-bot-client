@@ -84,19 +84,20 @@ public class MultiDelegate(ILogger<MultiDelegate> _logger, IGpsManager _gps, IGe
             { "identifier", region.Identifier },
         };
 
-        if (region is ParkingSite kregion) kregion.State = newStatus;
-
-        if (newStatus == GeofenceState.Entered)
+        if (region is ParkingSite site)
         {
-            jobParams.Add("state", "entered");
-        }
-        else if (newStatus == GeofenceState.Exited)
-        {
-            jobParams.Add("state", "exited");
-        }
-        else return Task.CompletedTask;
+            if (newStatus == GeofenceState.Entered)
+            {
+                site.Intersecting = true;
+            }
+            else if (newStatus == GeofenceState.Exited)
+            {
+                site.Intersecting = false;
+            }
+            else return Task.CompletedTask;
 
-        _jobs.Register(new JobInfo(nameof(GeofenceEventJob), typeof(GeofenceEventJob), false, jobParams));
+            _jobs.Register(new JobInfo(nameof(GeofenceEventJob), typeof(GeofenceEventJob), false, jobParams));
+        }
         return Task.CompletedTask;
     }
 

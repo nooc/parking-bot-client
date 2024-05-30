@@ -21,22 +21,21 @@ internal class GeofenceEventJob(ILogger<DeviceEventJob> logger, IServiceProvider
     {
         var args = JobInfo.Parameters ?? [];
         var identifier = args["identifier"];
-        var state = args["state"];
         var site = _data.Value.ParkingSites[identifier];
 
-        if (state == "entered")
+        if (site.Intersecting)
         {
-            site.Intercecting = true;
+            site.Intersecting = true;
             // Start listening if not already.
             if (_gps.Value.CurrentListener == null)
             {
                 await _gps.Value.StartListener(GpsRequest.Realtime(true));
             }
         }
-        else if (state == "exited")
+        else
         {
-            site.Intercecting = false;
-            // remove parking
+            site.Intersecting = false;
+            // remove parking if parked
             if (site.Parked)
             {
                 _toll.Value.StopParking(site);
@@ -45,7 +44,7 @@ internal class GeofenceEventJob(ILogger<DeviceEventJob> logger, IServiceProvider
             // Do not stop listener if there are other active (entered) regions.
             foreach (var region in _geoMgr.Value.GetMonitorRegions())
             {
-                if (region is ParkingSite pRegion && pRegion.Intercecting)
+                if (region is ParkingSite pRegion && pRegion.Intersecting)
                 {
                     return;
                 }

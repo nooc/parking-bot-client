@@ -2,6 +2,7 @@
 
 public abstract class ParkingTicket
 {
+    public required string Uuid { get; set; }
     public required DateTime Start { get; set; }
     public DateTime? Stop { get; set; }
     public required string PlateNumber { get; set; }
