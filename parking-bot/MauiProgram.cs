@@ -40,11 +40,13 @@ public static class MauiProgram
             .AddBluetoothLE<MultiDelegate>()
             .AddJobs()
             // Clients
-            .AddSingleton(GetHttpClient())
+            .AddSingleton<Http.HttpClientExt>()
+            .AddSingleton<Http.HttpClientInt>()
             // Services
-            .AddSingleton<UserAuthService>()
+            .AddSingleton<AppService>()
+            .AddSingleton<GothenburgOpenDataService>()
             .AddSingleton<VehicleBluetoothService>()
-            .AddSingleton<KioskParkingService>()
+            //.AddSingleton<KioskParkingService>()
             .AddSingleton<TollParkingService>()
             .AddSingleton<GeoFencingService>()
             .AddSingleton<ServiceHelperService>()
@@ -73,13 +75,5 @@ public static class MauiProgram
 #endif
 
         return builder.Build();
-    }
-
-    private static HttpClient GetHttpClient()
-    {
-        return new HttpClient
-        {
-            Timeout = TimeSpan.FromSeconds(5)
-        };
     }
 }

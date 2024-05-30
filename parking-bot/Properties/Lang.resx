@@ -125,7 +125,7 @@
     <value>Reminder</value>
   </data>
   <data name="phone_hint" xml:space="preserve">
-    <value>0701234567</value>
+    <value>07xxxxxxxx</value>
   </data>
   <data name="sms_num" xml:space="preserve">
     <value>SMS Number</value>
@@ -173,7 +173,7 @@
     <value>Error in settings.</value>
   </data>
   <data name="sms_prereq" xml:space="preserve">
-    <value>You need to have an account with Parkering Göteborg.</value>
+    <value>You need to have created an account containing the same phone number with &lt;a href="https://www.parkeringgoteborg.se/parking/"&gt;Parkering Göteborg&lt;/a&gt;.</value>
   </data>
   <data name="error" xml:space="preserve">
     <value>Error</value>
@@ -234,5 +234,8 @@
   </data>
   <data name="_already_exists_fmt" xml:space="preserve">
     <value>{} already exists.</value>
+  </data>
+  <data name="parking_started" xml:space="preserve">
+    <value>Parking started.</value>
   </data>
 </root>

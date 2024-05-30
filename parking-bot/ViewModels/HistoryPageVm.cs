@@ -7,7 +7,9 @@ using System.Collections.ObjectModel;
 
 namespace ParkingBot.ViewModels;
 
-public class HistoryPageVm(ILogger<HistoryPageVm> logger, KioskParkingService _kiosk, TollParkingService _toll)
+public class HistoryPageVm(ILogger<HistoryPageVm> logger,
+    //KioskParkingService _kiosk,
+    TollParkingService _toll)
     : BaseVm(logger)
 {
 
@@ -17,9 +19,9 @@ public class HistoryPageVm(ILogger<HistoryPageVm> logger, KioskParkingService _k
     {
         History.Clear();
         List<ParkingTicket> history = [];
-        history.AddRange(_kiosk.History);
+        //history.AddRange(_kiosk.History);
         history.AddRange(_toll.History);
-        history.Sort((a, b) => a.Ended?.CompareTo(b.Ended ?? DateTime.MaxValue) ?? 0);
+        history.Sort((a, b) => a.End?.CompareTo(b.End ?? DateTime.MaxValue) ?? 0);
         history.ForEach(History.Add);
     }
 }

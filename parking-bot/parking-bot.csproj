@@ -51,6 +51,7 @@
 	<ItemGroup>
 		<PackageReference Include="Google.Apis.PlayIntegrity.v1" Version="1.68.0.3416" />
 		<PackageReference Include="Mapsui.Maui" Version="4.1.6" />
+		<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="7.5.2" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.40" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.40" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
@@ -92,5 +93,5 @@
 	  <Folder Include="Map\" />
 	</ItemGroup>
 
-	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionparkingbotHideInfoBar="True" /></VisualStudio></ProjectExtensions>
+	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionparkingbotHideInfoBar="True" XamarinHotReloadGenericExceptionInfoBarparkingbotHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 </Project>

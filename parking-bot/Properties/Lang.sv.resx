@@ -187,7 +187,7 @@
     <value>Fel i inställningarna.</value>
   </data>
   <data name="sms_prereq" xml:space="preserve">
-    <value>Du behöver ha ett konto hos Parkering Göteborg.</value>
+    <value>Du behöver ha skapar ett konto med samma telefonnummer hos &lt;a href="https://www.parkeringgoteborg.se/"&gt;Parkering Göteborg&lt;/a&gt;.</value>
   </data>
   <data name="error" xml:space="preserve">
     <value>Fel</value>
@@ -251,5 +251,11 @@
   </data>
   <data name="_already_exists_fmt" xml:space="preserve">
     <value>{} finns redan.</value>
+  </data>
+  <data name="parking_started" xml:space="preserve">
+    <value>Parkering startad.</value>
+  </data>
+  <data name="phone_hint" xml:space="preserve">
+    <value>07xxxxxxxx</value>
   </data>
 </root>

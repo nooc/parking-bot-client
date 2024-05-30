@@ -313,6 +313,15 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Parking started..
+        /// </summary>
+        internal static string parking_started {
+            get {
+                return ResourceManager.GetString("parking_started", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Parking started. Ends at.
         /// </summary>
         internal static string parking_started_ends_at {
@@ -349,7 +358,7 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 0701234567.
+        ///   Looks up a localized string similar to 07xxxxxxxx.
         /// </summary>
         internal static string phone_hint {
             get {
@@ -430,7 +439,7 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You need to have an account with Parkering Göteborg..
+        ///   Looks up a localized string similar to You need to have created an account containing the same phone number with &lt;a href=&quot;https://www.parkeringgoteborg.se/parking/&quot;&gt;Parkering Göteborg&lt;/a&gt;..
         /// </summary>
         internal static string sms_prereq {
             get {

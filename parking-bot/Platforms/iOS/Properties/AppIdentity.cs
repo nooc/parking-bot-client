@@ -1,8 +1,8 @@
 ﻿namespace ParkingBot.Properties;
 
-internal class Security
+internal class AppIdentity
 {
-    public static string API_ID
+    public static string Id
     {
         get
         {

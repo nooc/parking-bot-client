@@ -1,5 +1,6 @@
 ﻿namespace ParkingBot.Models.Parking;
 
+/* TODO KioskSite
 public class KioskSite
 {
     public long SiteId { get; set; }
@@ -10,3 +11,4 @@ public class KioskSite
     public double Radius { get; set; }
     public Dictionary<string, string>? Description { get; set; }
 }
+*/

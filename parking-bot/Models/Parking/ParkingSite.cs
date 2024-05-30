@@ -5,7 +5,7 @@ using Shiny.Locations;
 
 namespace ParkingBot.Models.Parking;
 
-internal record ParkingSite : GeofenceRegion
+public record ParkingSite : GeofenceRegion
 {
     public enum SiteType
     {

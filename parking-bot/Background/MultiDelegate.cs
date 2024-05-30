@@ -3,7 +3,6 @@
 using ParkingBot.Background;
 using ParkingBot.Properties;
 using ParkingBot.Services;
-using ParkingBot.Util;
 
 using Shiny;
 using Shiny.BluetoothLE;
@@ -16,7 +15,9 @@ using System.Text.Json;
 namespace ParkingBot.Handlers;
 
 public class MultiDelegate(ILogger<MultiDelegate> _logger, IGpsManager _gps, IGeofenceManager _geo, IJobManager _jobs,
-        KioskParkingService _kiosk, TollParkingService _sms, VehicleBluetoothService _vbt)
+        //KioskParkingService _kiosk,
+        VehicleBluetoothService _bt,
+        TollParkingService _toll, ServiceHelperService _hlp)
     : IBleDelegate, IGeofenceDelegate, IGpsDelegate, INotificationDelegate
 {
     // NOTIFICATIONS
@@ -27,32 +28,43 @@ public class MultiDelegate(ILogger<MultiDelegate> _logger, IGpsManager _gps, IGe
 
     // GPS
     // Gps update event handler for when inside a region.
-    public Task OnReading(GpsReading reading)
+    public async Task OnReading(GpsReading reading)
     {
         _logger.LogInformation("On gps reading");
-
-        if (reading.PositionAccuracy <= Values.GPS_MIN_ACCURACY)
+        // must have connected car
+        var car = _bt.ConnectedCar;
+        if (car != null && reading.PositionAccuracy <= Values.GPS_MIN_ACCURACY)
         {
             // check that no ongoing parking exists
-            if (_kiosk.OngoingParking == null && !_jobs.IsRunning)
+            if (_toll.OngoingParking == null && !_jobs.IsRunning)
             {
+                var settings = await _hlp.GetSettings();
+                if (settings?.User.Phone == null)
+                {
+                    _logger.LogError("User phone not set.");
+                    return;
+                }
+                // for all regions
                 var today = DateTime.Now.DayOfWeek;
                 foreach (var region in _geo.GetMonitorRegions())
                 {
-                    if (region is GeoFencingService.KioskRegion kregion && kregion.State == GeofenceState.Entered)
+                    // if inside region
+                    if (region is GeoFencingService.SiteRegion sRegion && sRegion.State == GeofenceState.Entered)
                     {
-                        // get valid days
-                        var days = kregion.Site.Days?.Select(DateTimeUtils.FromStringDay) ?? Enumerable.Empty<DayOfWeek>();
+                        //TODO: polygon check if poly data
+
                         // get distance to region center
                         var dist = reading.Position.GetDistanceTo(region.Center);
-                        // chech distance
+                        // check distance
                         if (dist.TotalMeters <= Values.GPS_MAX_DISTANCE)
                         {
                             // do parking
                             Dictionary<string, string> jobParams = new()
                             {
-                                { "has_kiosk", days.Contains(DateTime.Now.DayOfWeek).ToString() },
-                                { "site", JsonSerializer.Serialize(kregion.Site) }
+                                { "site", JsonSerializer.Serialize(sRegion.Site) },
+                                { "site_type", "toll" },
+                                { "car", JsonSerializer.Serialize(car) },
+                                { "phone", settings.User.Phone },
                             };
                             _jobs.Register(new JobInfo(Values.PARKING_JOB, typeof(ParkingJob), false, jobParams));
                         }
@@ -60,14 +72,13 @@ public class MultiDelegate(ILogger<MultiDelegate> _logger, IGpsManager _gps, IGe
                 }
             }
         }
-        return Task.CompletedTask;
     }
 
     // GEO FENCING
     // Region intersection event handler for whe parking engine is active.
     public async Task OnStatusChanged(GeofenceState newStatus, GeofenceRegion region)
     {
-        if (region is GeoFencingService.KioskRegion kregion) kregion.State = newStatus;
+        if (region is GeoFencingService.SiteRegion kregion) kregion.State = newStatus;
 
         if (newStatus == GeofenceState.Entered)
         {
@@ -80,15 +91,15 @@ public class MultiDelegate(ILogger<MultiDelegate> _logger, IGpsManager _gps, IGe
         else if (newStatus == GeofenceState.Exited)
         {
             // remove parking
-            if (_sms.OngoingParking != null)
+            if (_toll.OngoingParking != null)
             {
-                _sms.StopParking();
+                _toll.StopParking();
             }
 
             // Do not stop listener if there are other active (entered) regions.
             foreach (var r in _geo.GetMonitorRegions())
             {
-                if (r is GeoFencingService.KioskRegion _region && _region.State == GeofenceState.Entered)
+                if (r is GeoFencingService.SiteRegion _region && _region.State == GeofenceState.Entered)
                 {
                     return;
                 }
@@ -103,11 +114,11 @@ public class MultiDelegate(ILogger<MultiDelegate> _logger, IGpsManager _gps, IGe
     {
         if (peripheral.Status == ConnectionState.Connected)
         {
-            _vbt.Connect(peripheral.Uuid, peripheral.Name);
+            _bt.Connect(peripheral.Uuid, peripheral.Name);
         }
         else if (peripheral.Status == ConnectionState.Disconnected)
         {
-            _vbt.Disconnect(peripheral.Uuid);
+            _bt.Disconnect(peripheral.Uuid);
         }
 
         return Task.CompletedTask;

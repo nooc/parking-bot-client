@@ -16,7 +16,8 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="m:ParkingTicket">
                         <VerticalStackLayout>
-                            <Label Text="{Binding Timestamp}" />
+                            <Label Text="{Binding Start}" />
+                            <Label Text="{Binding End}" />
                             <Label Text="{Binding PlateNumber}" />
                         </VerticalStackLayout>
                     </DataTemplate>

@@ -6,57 +6,39 @@ using ParkingBot.Services;
 
 namespace ParkingBot.ViewModels;
 
-public class ServiceStatusPageVm : BaseVm
+public class ServiceStatusPageVm(ILogger<MainPageVm> logger, GeoFencingService _geo,
+        //KioskParkingService _kiosk,
+        ServiceHelperService _hlp,
+        TollParkingService _toll)
+        : BaseVm(logger)
 {
-    private readonly GeoFencingService _geo;
-    private readonly KioskParkingService _kiosk;
-    private readonly TollParkingService _toll;
-
-    private ISiteInfo? Info = null;
     public bool IsActive
     {
-        get => _geo.IsGeoFencing;
+        get => Preferences.Get(Values.SRV_IS_ACTIVE, false);
         set => SetActiveState(value);
     }
-    public string RegionName { get; private set; }
+    public string RegionName { get; private set; } = string.Empty;
     public bool HasRegion { get; private set; }
-    public string Description { get; private set; }
-    public string Availability { get; private set; }
-    public string StatusText { get; private set; }
-    public string UserGreeting { get; private set; }
-
-    public ServiceStatusPageVm(ILogger<MainPageVm> logger, GeoFencingService geofencingService,
-        KioskParkingService kioskParkingService, TollParkingService smsParkingService)
-        : base(logger)
-    {
-        _geo = geofencingService;
-        _kiosk = kioskParkingService;
-        _toll = smsParkingService;
-
-        HasRegion = false;
-        RegionName = string.Empty;
-        Description = string.Empty;
-        Availability = string.Empty;
-        StatusText = string.Empty;
-        UserGreeting = string.Empty;
-    }
+    public string Description { get; private set; } = string.Empty;
+    public string Availability { get; private set; } = string.Empty;
+    public string StatusText { get; private set; } = string.Empty;
+    public string UserGreeting { get; private set; } = string.Empty;
 
     protected async override void ExecuteLoadModelCommand()
     {
         UserGreeting = $"{Lang.hello} {Preferences.Get(Values.TOKEN_USER_KEY, string.Empty)}";
 
-        KioskSite? site;
-        if (_geo.IsGeoFencing) site = await _geo.GetActiveRegion();
-        else site = null;
-
+        // get closest active region
+        ParkingSite? site = null;
+        if (_geo.IsGeoFencing)
+        {
+            site = await _geo.GetActiveRegion();
+        }
         if (site != null)
         {
-            if (Info != null && Info.SiteId == site.SiteId)
-                Info = await _kiosk.GetSiteInfoAsync(site);
-
-            RegionName = Info?.SiteName ?? string.Empty;
-            Description = Info?.SiteDescription ?? string.Empty;
-            Availability = Info?.SiteAvailability ?? string.Empty;
+            RegionName = "Region X";
+            Description = "Region desc";
+            Availability = "Availability";
             OnPropertyChanged(nameof(RegionName));
         }
         else
@@ -71,25 +53,26 @@ public class ServiceStatusPageVm : BaseVm
         OnPropertyChanged(nameof(Description));
         OnPropertyChanged(nameof(Availability));
 
-        if (_kiosk.OngoingParking is ParkingTicket kticket)
+        //TODO: status text
+        //if (_kiosk.OngoingParking is ParkingTicket kticket)
+        //{
+        //    StatusText = "Ongoing kiosk";
+        //}
+        //else
+        if (_toll.OngoingParking is ParkingTicket tticket)
         {
-            StatusText = kticket.GetSummary();
-        }
-        else if (_toll.OngoingParking is ParkingTicket tticket)
-        {
-            StatusText = tticket.GetSummary();
+            StatusText = "Ongoing toll";
         }
         else StatusText = Lang.no_active_parking;
 
         OnPropertyChanged(nameof(StatusText));
     }
 
-    private async void SetActiveState(bool value)
+    private async void SetActiveState(bool enable)
     {
-        if (_geo != null)
-        {
-            await _geo.SetEnabled(value);
-        }
+        if (enable) _hlp.Start();
+        else await _hlp.StopAll();
+
         OnPropertyChanged(nameof(IsActive));
     }
 

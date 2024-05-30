@@ -23,7 +23,7 @@ public class MapPageVm : BaseVm
             {
                 //_Map.Navigator.ViewChanged += Map_ViewChanged;
                 _Map.Navigator.RotationLock = true;
-                _Map.Layers.Add(Mapsui.Tiling.OpenStreetMap.CreateTileLayer(Properties.Values.USER_AGENT));
+                _Map.Layers.Add(Mapsui.Tiling.OpenStreetMap.CreateTileLayer($"{Properties.Values.USER_AGENT_NAME}/{Properties.Values.USER_AGENT_VER}"));
                 Zoom = $"{_Map.Navigator?.Viewport.Resolution}";
                 LocationLayer = new MyLocationLayer(_Map);
                 _Map.Layers.Add(FeatureLayer);

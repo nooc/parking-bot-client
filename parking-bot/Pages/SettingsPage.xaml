@@ -12,7 +12,7 @@
         <VerticalStackLayout HorizontalOptions="Fill" VerticalOptions="Fill">
 
             <Label Style="{DynamicResource SettingsLabel}" Text="{Static p:Lang.sms_num}" />
-            <Label FontSize="Body" Text="{Static p:Lang.sms_prereq}" />
+            <Label FontSize="Body" Text="{Static p:Lang.sms_prereq}" TextType="Html" />
             <Entry Margin="15,0,0,0" Text="{Binding PhoneNumber,Mode=TwoWay}" FontSize="Large" Placeholder="{Static p:Lang.phone_hint}"
                    SemanticProperties.Hint="{Static p:Lang.phone_hint}" Keyboard="Telephone" HorizontalOptions="Fill" />
             
@@ -20,7 +20,7 @@
                 <Switch IsToggled="{Binding SendReminder,Mode=TwoWay}" HorizontalOptions="Start"/>
                 <Label Text="{Binding ReminderStateLabel}" HorizontalOptions="End" VerticalOptions="Center" />
             </HorizontalStackLayout>
-
+<!-- TODO kiosk settings
             <Label Style="{DynamicResource SettingsLabel}" Text="{Static p:Lang.kiosk_parking}" />
             <CollectionView x:Name="PairList" ItemsSource="{Binding KioskList}" HorizontalOptions="Fill">
                 <CollectionView.ItemTemplate>
@@ -30,7 +30,7 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
             <Button Text="{Static p:Lang.add_kiosk}" Clicked="AddKiosk_Clicked" HorizontalOptions="Center" />
-
+-->
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

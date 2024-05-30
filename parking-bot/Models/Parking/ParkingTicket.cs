@@ -1,21 +1,20 @@
-﻿using ParkingBot.Models.Response;
-
-namespace ParkingBot.Models.Parking;
+﻿namespace ParkingBot.Models.Parking;
 
 public abstract class ParkingTicket
 {
-    public required DateTime Started { get; set; }
-    public DateTime? Ended { get; set; }
+    public required DateTime Start { get; set; }
+    public DateTime? End { get; set; }
     public required string PlateNumber { get; set; }
-    public TimeSpan Duration => (Ended == null ? DateTime.Now : (DateTime)Ended) - Started;
+    public TimeSpan Duration => (End == null ? DateTime.Now : (DateTime)End) - Start;
 }
-
+/*
 public sealed class KioskParkingTicket : ParkingTicket
 {
     public KioskParkingResult? ParkingResult { get; set; }
 }
+*/
 
-public sealed class SMSParkingTicket : ParkingTicket
+public sealed class TollParkingTicket : ParkingTicket
 {
     public SMSParkingResult? ParkingResult { get; set; }
 }

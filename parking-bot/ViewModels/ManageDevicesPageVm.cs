@@ -11,39 +11,33 @@ namespace ParkingBot.ViewModels;
 
 public class ManageDevicesPageVm : BaseVm
 {
-    private readonly VehicleBluetoothService _vbs;
+    private readonly VehicleBluetoothService _bt;
 
-    //TODO: Remove hardcoded
-    public ObservableCollection<CarBtDevice> RegisteredCars { get; } = [
-        new ("ABC123", new("2f4d809e-7ed4-4033-9cae-bba1db5ca4f6", "My Volvo device")),
-        new ("ZYX987", new("1f4d809e-7ed4-4033-00ae-bba1db5ca4f9", "My Audi device"))
-        ];
-    public ObservableCollection<BtDevice> PairedDevices { get; } = [
-        new("000d809e-7ed4-4033-0000-bba1db5ca4f6", "My Sisters car"),
-        new("111d809e-7ed4-4033-1111-bba1db5ca4f9", "Some rental car")
-        ];
+    public ObservableCollection<CarBtDevice> RegisteredCars { get; } = [];
+    public ObservableCollection<BtDevice> PairedDevices { get; } = [];
 
     public Command RegisterDevice { get; }
     public Command UnregisterDevice { get; }
 
     public ManageDevicesPageVm(ILogger<ManageDevicesPageVm> logger, VehicleBluetoothService vbs) : base(logger)
     {
-        _vbs = vbs;
+        _bt = vbs;
         RegisterDevice = new Command<BtDevice>(ExecuteRegisterDevice);
         UnregisterDevice = new Command<CarBtDevice>(ExecuteUnregisterDevice);
     }
 
-    protected override void ExecuteLoadModelCommand()
+    protected override async void ExecuteLoadModelCommand()
     {
         PairedDevices.Clear();
         RegisteredCars.Clear();
 
-        _vbs.GetPairedDevices().Aggregate(PairedDevices, (devices, device) =>
+        _bt.GetPairedDevices().Aggregate(PairedDevices, (devices, device) =>
         {
             devices.Add(device);
             return devices;
         });
-        _vbs.GetRegisteredDevices().Aggregate(RegisteredCars, (cars, car) =>
+        var regCars = await _bt.GetRegisteredDevices();
+        regCars?.Aggregate(RegisteredCars, (cars, car) =>
         {
             cars.Add(car);
             return cars;

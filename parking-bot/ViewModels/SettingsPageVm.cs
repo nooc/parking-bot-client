@@ -2,18 +2,21 @@
 
 using ParkingBot.Models.Parking;
 using ParkingBot.Properties;
-using ParkingBot.Services;
 
 using System.Collections.ObjectModel;
 
 namespace ParkingBot.ViewModels;
 
-public class SettingsPageVm(ILogger<SettingsPageVm> logger, KioskParkingService _kiosk) : BaseVm(logger)
+public class SettingsPageVm(ILogger<SettingsPageVm> logger
+    //KioskParkingService kiosk,
+    //GothenburgOpenDataService opendata
+    ) : BaseVm(logger)
 {
     private string? _PhoneNumber;
     private bool _SendReminder;
 
-    public ObservableCollection<ParkingSite> KioskList { get; } = [];
+    internal ObservableCollection<ParkingSite> KioskList { get; } = [];
+
     public string? PhoneNumber
     {
         get => _PhoneNumber;
@@ -43,19 +46,26 @@ public class SettingsPageVm(ILogger<SettingsPageVm> logger, KioskParkingService 
 
     internal bool HasKiosk(string id)
     {
-        return KioskList.First(site => site.SiteId.Equals(id)) != null;
+        //TODO: identifier  is..?
+        return KioskList.First(site => site.Identifier.Equals(id)) != null;
     }
 
-    internal async void AddKiosk(string id)
+    internal void AddKiosk(string id)
     {
         // TODO: get kiosk info from opendata by id and if exists store/add to list
-        var info = await _kiosk.GetSiteInfoAsync(id);
+        /*
+        var info = await kiosk.GetSiteInfoAsync(id);
         if (info != null)
         {
-            var site = new ParkingSite(, info.)
-            KioskSiteInfo
-            KioskList.Add(info);
-        }
+            var result = await opendata.GetSiteInfoAsync(info.);
+            if (result != null)
+            {
+                var site = new ParkingSite(info.SiteId, result.)
+                site.SiteData = info;
+                site.Type = ParkingType.Kiosk;
+                KioskList.Add(site);
+            }
+        }*/
         throw new NotImplementedException();
     }
 }

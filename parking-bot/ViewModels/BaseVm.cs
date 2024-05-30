@@ -26,7 +26,7 @@ public abstract class BaseVm : INotifyPropertyChanged
         isBusy = true;
         try
         {
-            _ExecuteLoadModelCommand();
+            ExecuteLoadModelCommand();
         }
         catch (Exception ex)
         {
