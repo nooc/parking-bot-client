@@ -17,7 +17,8 @@ public record ParkingSite : GeofenceRegion
 
     public object? SiteData { get; set; }
 
-    public GeofenceState State { get; set; } = GeofenceState.Unknown;
+    public bool Intercecting { get; set; } = false;
+    public bool Parked { get; set; } = false;
 
     public SiteType Type { get; set; } = SiteType.None;
 

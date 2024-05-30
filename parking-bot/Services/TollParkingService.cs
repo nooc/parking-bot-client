@@ -9,8 +9,8 @@ namespace ParkingBot.Services;
 
 public class TollParkingService
 {
-    private static readonly string HISTORY_KEY = "sms-history";
-    private static readonly string ONGOING_SMS_KEY = "ongoing-sms";
+    private static readonly string HISTORY_KEY = "toll.history";
+    private static readonly string ONGOING_KEY = "ongoing.toll";
 
     private readonly ILogger _logger;
     private readonly IList<TollParkingTicket> _history;
@@ -18,19 +18,17 @@ public class TollParkingService
     private readonly GothenburgOpenDataService _opendata;
 
     public ParkingTicket? OngoingParking => GetOngoing();
-    public IList<ParkingTicket> History => new List<ParkingTicket>();
+    public IList<TollParkingTicket> History => _history;
 
     public TollParkingService(ILogger<TollParkingService> logger, GothenburgOpenDataService opendata, SmsService sms)
     {
         _logger = logger;
         _opendata = opendata;
-        _history = JsonSerializer.Deserialize<List<TollParkingTicket>>(Preferences.Get(HISTORY_KEY, "[]")) ?? Enumerable.Empty<TollParkingTicket>().ToList();
+        _history = JsonSerializer.Deserialize<List<TollParkingTicket>>(Preferences.Get(HISTORY_KEY, "[]")) ?? [];
         _sms = sms;
     }
 
-
-
-    public async Task<ParkingTicket?> ParkAsync(string plate, TollSiteInfo site)
+    public async Task<TollParkingTicket?> ParkAsync(string plate, TollSiteInfo site)
     {
         var result = await _sms.SendMessage(
             recipient: Values.GBG_SMS_NUMBER,
@@ -54,16 +52,16 @@ public class TollParkingService
                 _history.RemoveAt(Values.MAX_HISTORY);
             }
             Preferences.Set(HISTORY_KEY, JsonSerializer.Serialize(_history));
-            Preferences.Set(ONGOING_SMS_KEY, JsonSerializer.Serialize(ticket));
+            Preferences.Set(ONGOING_KEY, JsonSerializer.Serialize(ticket));
 
             return ticket;
         }
         return null;
     }
 
-    private ParkingTicket? GetOngoing()
+    private TollParkingTicket? GetOngoing()
     {
-        var saved = Preferences.Get(ONGOING_SMS_KEY, string.Empty);
+        var saved = Preferences.Get(ONGOING_KEY, string.Empty);
         try
         {
             if (saved != null && !saved.Equals(string.Empty))
@@ -89,8 +87,7 @@ public class TollParkingService
     /// </summary>
     public async void StopParking()
     {
-        var ongoing = OngoingParking as TollParkingTicket;
-        if (ongoing != null)
+        if (OngoingParking is TollParkingTicket ongoing)
         {
             var endParkingMessage = Values.GBG_SMS_STOP_TEMPLATE;
             if (endParkingMessage != null)
@@ -106,6 +103,6 @@ public class TollParkingService
 
     internal void ClearParking()
     {
-        Preferences.Remove(ONGOING_SMS_KEY);
+        Preferences.Remove(ONGOING_KEY);
     }
 }

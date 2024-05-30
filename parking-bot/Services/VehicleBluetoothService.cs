@@ -16,9 +16,9 @@ public class VehicleBluetoothService(IBleManager _bt, GeoFencingService _geo, Se
         }
     }
 
-    internal async Task<Shiny.AccessState> RequestAccessAsync()
+    public Task<Shiny.AccessState> RequestAccessAsync()
     {
-        return await _bt.RequestAccessAsync();
+        return _bt.RequestAccessAsync();
     }
 
     /// <summary>
@@ -71,17 +71,16 @@ public class VehicleBluetoothService(IBleManager _bt, GeoFencingService _geo, Se
                 ConnectedDict.Add(uuid, car);
             }
         }
-        await _geo.SetEnabled(true);
     }
 
     /// <summary>
     /// Remove device and trigger action.
     /// </summary>
     /// <param name="uuid"></param>
-    internal async void Disconnect(string uuid)
+    internal int Disconnect(string uuid)
     {
         ConnectedDict.Remove(uuid);
-        await _hlp.StopAll();
+        return ConnectedDict.Count;
     }
 
     /// <summary>

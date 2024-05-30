@@ -4,7 +4,7 @@ using Shiny.Locations;
 
 namespace ParkingBot.Services;
 
-public partial class GeoFencingService(IGeofenceManager _geo, ServiceHelperService _helper)
+public class GeoFencingService(IGeofenceManager _geo, ServiceHelperService _helper)
 {
     public bool IsGeoFencing => _geo.GetMonitorRegions().Count != 0;
 

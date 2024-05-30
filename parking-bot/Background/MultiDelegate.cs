@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 
 using ParkingBot.Background;
+using ParkingBot.Models.Parking;
 using ParkingBot.Properties;
 using ParkingBot.Services;
 
@@ -75,52 +76,50 @@ public class MultiDelegate(ILogger<MultiDelegate> _logger, IGpsManager _gps, IGe
     }
 
     // GEO FENCING
-    // Region intersection event handler for whe parking engine is active.
-    public async Task OnStatusChanged(GeofenceState newStatus, GeofenceRegion region)
+    // Region intersection event handler for when parking engine is active.
+    public Task OnStatusChanged(GeofenceState newStatus, GeofenceRegion region)
     {
-        if (region is GeoFencingService.SiteRegion kregion) kregion.State = newStatus;
+        Dictionary<string, string> jobParams = new()
+        {
+            { "identifier", region.Identifier },
+        };
+
+        if (region is ParkingSite kregion) kregion.State = newStatus;
 
         if (newStatus == GeofenceState.Entered)
         {
-            // Start listening if not already.
-            if (_gps.CurrentListener == null)
-            {
-                await _gps.StartListener(GpsRequest.Realtime(true));
-            }
+            jobParams.Add("state", "entered");
         }
         else if (newStatus == GeofenceState.Exited)
         {
-            // remove parking
-            if (_toll.OngoingParking != null)
-            {
-                _toll.StopParking();
-            }
-
-            // Do not stop listener if there are other active (entered) regions.
-            foreach (var r in _geo.GetMonitorRegions())
-            {
-                if (r is GeoFencingService.SiteRegion _region && _region.State == GeofenceState.Entered)
-                {
-                    return;
-                }
-            }
-            await _gps.StopListener();
+            jobParams.Add("state", "exited");
         }
+        else return Task.CompletedTask;
+
+        _jobs.Register(new JobInfo(nameof(GeofenceEventJob), typeof(GeofenceEventJob), false, jobParams));
+        return Task.CompletedTask;
     }
 
     // BLUETOOTH
     // Parking actions should only occure while we have a device connection. 
     public Task OnPeripheralStateChanged(IPeripheral peripheral)
     {
+        Dictionary<string, string> jobParams = new()
+        {
+            { "uuid", peripheral.Uuid },
+            { "name", peripheral.Name??string.Empty }
+        };
+
         if (peripheral.Status == ConnectionState.Connected)
         {
-            _bt.Connect(peripheral.Uuid, peripheral.Name);
+            jobParams.Add("state", "connected");
         }
         else if (peripheral.Status == ConnectionState.Disconnected)
         {
-            _bt.Disconnect(peripheral.Uuid);
+            jobParams.Add("state", "disconnected");
         }
-
+        else return Task.CompletedTask;
+        _jobs.Register(new JobInfo(nameof(DeviceEventJob), typeof(DeviceEventJob), false, jobParams));
         return Task.CompletedTask;
     }
 
