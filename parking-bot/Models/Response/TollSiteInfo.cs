@@ -18,6 +18,8 @@ public sealed class TollSiteInfo : ISiteInfo
     [JsonIgnore]
     public long SiteId => long.Parse(Id ?? "-1");
     [JsonIgnore]
+    public string Code => PhoneParkingCode ?? string.Empty;
+    [JsonIgnore]
     public string SiteName => Name ?? string.Empty;
     [JsonIgnore]
     public string SiteDescription => $"<p>{Owner}</p><p>{ParkingCost}</p>";

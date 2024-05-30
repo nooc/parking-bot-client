@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 
-using ParkingBot.Models.Bt;
 using ParkingBot.Models.Parking;
 using ParkingBot.Properties;
 using ParkingBot.Services;
@@ -8,84 +7,61 @@ using ParkingBot.Services;
 using Shiny.Jobs;
 using Shiny.Notifications;
 
-using System.Text.Json;
-
 namespace ParkingBot.Background;
 
-public class ParkingJob : Job
+public class ParkingJob(ILogger<ParkingJob> _logger, INotificationManager _notif, TollParkingService _toll, ServiceData _data) : Job(_logger)
 {
     private class RunContext
     {
-        public required CarBtDevice Car { get; set; }
-        public required string Site { get; set; }
-        public required string SiteType { get; set; }
-        public required string Phone { get; set; }
+        public ParkingSite? Site { get; set; }
+        public required string RegNum { get; set; }
         public ParkingTicket? Ticket { get; set; }
     }
 
-    private readonly ILogger<ParkingJob> _logger;
-    private readonly INotificationManager _notifications;
-    //private readonly KioskParkingService _kiosk;
-    private readonly TollParkingService _sms;
-    private readonly ServiceHelperService _helper;
-
-    public ParkingJob(ILogger<ParkingJob> logger, INotificationManager notificationManager,
-        //KioskParkingService kioskParkingService,
-        TollParkingService smsParkingService, ServiceHelperService helper) : base(logger)
+    protected override Task Run(CancellationToken cancelToken)
     {
-        _logger = logger;
-        _notifications = notificationManager;
-        //_kiosk = kioskParkingService;
-        _sms = smsParkingService;
-        _helper = helper;
-    }
-
-    protected override async Task Run(CancellationToken cancelToken)
-    {
-        if (_helper.IsServiceConfigured)
+        var identifier = JobInfo.Parameters?["site"] ?? string.Empty;
+        var site = _data.ParkingSites[identifier];
+        var action = JobInfo.Parameters?["action"] ?? string.Empty;
+        var ctx = new RunContext
         {
-            if (JobInfo.Parameters is Dictionary<string, string> dict)
-            {
-                var ctx = new RunContext
-                {
-                    Car = JsonSerializer.Deserialize<CarBtDevice>(dict["car"]) ?? throw new ArgumentNullException("JobInfo.Parameters:car"),
-                    Phone = dict["phone"],
-                    Site = dict["site"],
-                    SiteType = dict["site_type"]
-                };
+            Site = site,
+            RegNum = JobInfo.Parameters?["car"] ?? string.Empty,
+        };
 
-                if (ctx.SiteType.Equals("toll"))
-                {
-                    TryTollPark(ctx);
-
-                }
-                else if (ctx.SiteType.Equals("kiosk"))
-                {
-                    TryKioskPark(ctx);
-                }
-            }
-        }
-        else
+        if (action == "start")
         {
-            await _helper.StopAll();
-            await _notifications.Send(new Notification
-            {
-                Title = Lang.auto_parking,
-                Message = Lang.settings_error
-            });
-            return;
+            if (site.SiteInfo is TollSiteInfo) TryTollPark(ctx);
+            //else (info is KioskSiteInfo) TryKioskPark(ctx);
         }
+        else if (action == "stop")
+        {
+            if (site.SiteInfo is TollSiteInfo) TryStopTollPark(ctx);
+        }
+        return Task.CompletedTask;
     }
-
     private async void TryTollPark(RunContext ctx)
     {
-        var tollSite = JsonSerializer.Deserialize<TollSiteInfo>(ctx.Site) ?? throw new ArgumentNullException("RunContext.Site");
-        var ticket = await _sms.ParkAsync(ctx.Car.RegNumber, tollSite);
-        if (ticket != null)
+        if (ctx.Site?.SiteInfo is TollSiteInfo toll)
         {
-            await _notifications.Send(
+            ctx.Ticket = await _toll.ParkAsync(ctx.RegNum, toll);
+            if (ctx.Ticket != null)
+            {
+                await _notif.Send(
+                    Lang.app_title,
+                    Lang.parking_started
+                );
+            }
+        }
+    }
+    private async void TryStopTollPark(RunContext ctx)
+    {
+        if (ctx.Site?.SiteInfo is TollSiteInfo toll)
+        {
+            _toll.StopParking(ctx.Site);
+            await _notif.Send(
                 Lang.app_title,
-                Lang.parking_started
+                Lang.parking_stopped
             );
         }
     }

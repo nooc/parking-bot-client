@@ -4,7 +4,7 @@ using Shiny.Locations;
 
 namespace ParkingBot.Services;
 
-public class GeoFencingService(IGeofenceManager _geo, ServiceHelperService _helper)
+public class GeoFencingService(IGeofenceManager _geo, ServiceHelperService _helper, ServiceData _data)
 {
     public bool IsGeoFencing => _geo.GetMonitorRegions().Count != 0;
 
@@ -13,7 +13,7 @@ public class GeoFencingService(IGeofenceManager _geo, ServiceHelperService _help
         if (enable)
         {
             List<Task> startTasks = [];
-            foreach (var region in _helper.GetRegions())
+            foreach (var (_, region) in _data.ParkingSites)
             {
                 startTasks.Add(_geo.StartMonitoring(region));
             }

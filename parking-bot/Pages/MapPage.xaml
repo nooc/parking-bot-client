@@ -20,6 +20,6 @@
             VerticalOptions="FillAndExpand"
             HorizontalOptions="FillAndExpand" />
         <Label Grid.Row="1"
-            Text="{Binding Zoom}" />
+            Text="{Binding Footer}" />
     </Grid>
 </ContentPage>

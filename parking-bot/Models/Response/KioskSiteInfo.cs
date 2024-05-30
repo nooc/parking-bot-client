@@ -16,6 +16,8 @@ public sealed class KioskSiteInfo : ISiteInfo
     [JsonIgnore]
     public long SiteId => ParkingAreaId;
     [JsonIgnore]
+    public string Code => string.Empty;
+    [JsonIgnore]
     public string SiteName => Name ?? "???";
     [JsonIgnore]
     public string SiteDescription => Description ?? "???";

@@ -9,40 +9,33 @@ namespace ParkingBot.Services;
 
 public class GothenburgOpenDataService(ILogger<GothenburgOpenDataService> logger, Http.HttpClientExt httpClient)
 {
-    private readonly string[] TollEndpoints = [Values.GBG_BASE_PRIV_TOLL_URI, Values.GBG_BASE_PUBL_TOLL_URI];
+    private readonly string[] TollEndpoints = [Values.GBG_BASE_PUBL_TOLL_URI, Values.GBG_BASE_PRIV_TOLL_URI];
 
     /// <summary>
     /// Get nearest toll site info.
     /// </summary>
-    /// <param name="loc">Query location</param>
     /// <param name="maxDist">Maximum distance to concider (m)</param>
     /// <returns></returns>
-    public async Task<ISiteInfo?> GetNearestSiteInfoAsync(Location loc, double maxDist)
+    public async Task<List<TollSiteInfo>> GetNearestSiteInfosAsync(double lat, double lon, double maxDist)
     {
-        TollSiteInfo? selectedSite = null;
-        logger.LogInformation("GothenburgOpenDataService.GetNearestSiteInfoAsync()");
-        double selectedDist = double.MaxValue;
+        List<TollSiteInfo> sites = [];
         foreach (var endpoint in TollEndpoints)
         {
-            var sites = await httpClient.GetFromJsonAsync<List<TollSiteInfo>>(RenderUrl(endpoint, loc: loc));
-            if (sites != null)
+            var url = RenderUrl(endpoint, lat: lat, lon: lon, radius: maxDist);
+            var results = await httpClient.GetFromJsonAsync<List<TollSiteInfo>>(url);
+            if (results is List<TollSiteInfo> tollSites)
             {
-
-                foreach (var site in sites)
+                foreach (var site in tollSites)
                 {
-                    if (site != null)
+                    var dist = Location.CalculateDistance(lat, lon, site.Lat, site.Long, DistanceUnits.Kilometers) * 1000;
+                    if (dist < maxDist)
                     {
-                        var dist = Location.CalculateDistance(loc.Latitude, loc.Longitude, site.Lat, site.Long, DistanceUnits.Kilometers) * 1000;
-                        if (dist < selectedDist)
-                        {
-                            selectedDist = dist;
-                            selectedSite = site;
-                        }
+                        sites.Add(site);
                     }
                 }
             }
         }
-        return selectedDist <= maxDist ? selectedSite : null;
+        return sites;
     }
     /// <summary>
     /// Get toll site info by id.
@@ -69,23 +62,22 @@ public class GothenburgOpenDataService(ILogger<GothenburgOpenDataService> logger
     /// </summary>
     /// <param name="template"></param>
     /// <param name="baseUrl"></param>
-    /// <param name="loc"></param>
     /// <param name="ext"></param>
     /// <returns></returns>
-    private static string RenderUrl(string template, string? baseUrl = null, Location? loc = null, string? ext = null)
+    private static string RenderUrl(string template, string? baseUrl = null, double? lat = null, double? lon = null, string? ext = null, double radius = 500)
     {
         var rendered = template
             .Replace("{APPID}", Values.GBG_APP_ID)
-            .Replace("{RADIUS}", Values.GPS_REGION_RADIUS.ToString());
+            .Replace("{RADIUS}", radius.ToString());
         if (baseUrl != null)
         {
             rendered = rendered.Replace("{BASE}", baseUrl);
         }
-        if (loc != null)
+        if (lat is double && lon is double)
         {
             rendered = rendered
-                .Replace("{LATITUDE}", loc.Latitude.ToString())
-                .Replace("{LONGITUDE}", loc.Longitude.ToString());
+                .Replace("{LATITUDE}", lat.ToString())
+                .Replace("{LONGITUDE}", lon.ToString());
         }
         if (ext != null)
         {

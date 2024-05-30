@@ -12,7 +12,7 @@ public partial class ServiceHelperService(IServiceProvider services, ServiceData
 {
     private Lazy<IGeofenceManager> _geo = services.GetLazyService<IGeofenceManager>();
     private Lazy<IGpsManager> _gps = services.GetLazyService<IGpsManager>();
-    private Lazy<IJobManager> _job = services.GetLazyService<IJobManager>();;
+    private Lazy<IJobManager> _job = services.GetLazyService<IJobManager>();
     private Lazy<VehicleBluetoothService> _bt = services.GetLazyService<VehicleBluetoothService>();
     private Lazy<TollParkingService> _toll = services.GetLazyService<TollParkingService>();
     private Lazy<AppService> _api = services.GetLazyService<AppService>();

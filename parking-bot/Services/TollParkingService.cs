@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace ParkingBot.Services;
 
-public class TollParkingService(ILogger<TollParkingService> _logger, SmsService _sms, ServiceData _data, VehicleBluetoothService _bt)
+public class TollParkingService(ILogger<TollParkingService> _logger, SmsService _sms, VehicleBluetoothService _bt)
 {
     private static readonly string HISTORY_KEY = "toll.history";
     private static readonly string ONGOING_KEY = "ongoing.toll";
@@ -114,7 +114,10 @@ public class TollParkingService(ILogger<TollParkingService> _logger, SmsService 
         var hist = History;
         foreach (var item in hist)
         {
-            if (ticket.ParkingResult)
+            if (ticket.Uuid == item.Uuid)
+            {
+                item.Stop = ticket.Stop;
+            }
         }
         Preferences.Set(HISTORY_KEY, JsonSerializer.Serialize(hist));
     }
