@@ -238,4 +238,7 @@
   <data name="parking_started" xml:space="preserve">
     <value>Parking started.</value>
   </data>
+  <data name="parking_stopped" xml:space="preserve">
+    <value>Parking Stopped.</value>
+  </data>
 </root>

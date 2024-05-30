@@ -5,6 +5,7 @@ namespace ParkingBot.Pages;
 public partial class MapPage : ContentPage
 {
     private readonly MapPageVm Vm;
+    private bool _locationUpdates = true;
 
     public MapPage(MapPageVm viewModel)
     {
@@ -22,7 +23,35 @@ public partial class MapPage : ContentPage
         }
     }
 
-    private void MapInfo(object? sender, Mapsui.MapInfoEventArgs e)
+    private async void MapInfo(object? sender, Mapsui.MapInfoEventArgs e)
     {
+        await DisplayAlert("info", e.MapInfo?.WorldPosition?.ToString(), "ok");
+    }
+
+    protected override void OnAppearing()
+    {
+        _locationUpdates = true;
+        Dispatcher.StartTimer(TimeSpan.FromSeconds(4), UpdateLocation);
+        base.OnAppearing();
+    }
+    protected override void OnDisappearing()
+    {
+        _locationUpdates = false;
+        base.OnDisappearing();
+    }
+
+    private async void DoUpdateLocation()
+    {
+        var loc = await Geolocation.GetLocationAsync();
+        if (loc != null)
+        {
+            Vm.UpdateLocation(loc);
+        }
+    }
+
+    private bool UpdateLocation()
+    {
+        DoUpdateLocation();
+        return _locationUpdates;
     }
 }

@@ -1,10 +1,11 @@
-﻿using ParkingBot.Models.Bt;
+﻿using ParkingBot.Models;
+using ParkingBot.Models.Bt;
 
 using Shiny.BluetoothLE;
 
 namespace ParkingBot.Services;
 
-public class VehicleBluetoothService(IBleManager _bt, GeoFencingService _geo, ServiceHelperService _hlp)
+public class VehicleBluetoothService(IBleManager _bt, ServiceHelperService _hlp, ServiceData _data, AppService _api)
 {
     private readonly Dictionary<string, CarBtDevice> ConnectedDict = [];
 
@@ -16,9 +17,9 @@ public class VehicleBluetoothService(IBleManager _bt, GeoFencingService _geo, Se
         }
     }
 
-    internal async Task<Shiny.AccessState> RequestAccessAsync()
+    public Task<Shiny.AccessState> RequestAccessAsync()
     {
-        return await _bt.RequestAccessAsync();
+        return _bt.RequestAccessAsync();
     }
 
     /// <summary>
@@ -46,14 +47,10 @@ public class VehicleBluetoothService(IBleManager _bt, GeoFencingService _geo, Se
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public async Task<IEnumerable<CarBtDevice>> GetRegisteredDevices()
+    public IEnumerable<CarBtDevice> GetRegisteredDevices()
     {
-        var settings = await _hlp.GetSettings();
-        if (settings != null)
-        {
-            return settings.Vehicles.Select(v => new CarBtDevice(v.LicensePlate, v.DeviceId, v.Name));
-        }
-        return [];
+        _hlp.GetSettings();
+        return _data.Settings?.Vehicles.Select(v => new CarBtDevice(v.LicensePlate, v.DeviceId, v.Name)) ?? [];
     }
 
     /// <summary>
@@ -61,9 +58,9 @@ public class VehicleBluetoothService(IBleManager _bt, GeoFencingService _geo, Se
     /// </summary>
     /// <param name="uuid"></param>
     /// <param name="name"></param>
-    internal async void Connect(string uuid, string? name)
+    internal void Connect(string uuid, string? name)
     {
-        var regList = await GetRegisteredDevices() ?? [];
+        var regList = GetRegisteredDevices() ?? [];
         foreach (var car in regList)
         {
             if (car.DeviceId == uuid)
@@ -71,17 +68,16 @@ public class VehicleBluetoothService(IBleManager _bt, GeoFencingService _geo, Se
                 ConnectedDict.Add(uuid, car);
             }
         }
-        await _geo.SetEnabled(true);
     }
 
     /// <summary>
     /// Remove device and trigger action.
     /// </summary>
     /// <param name="uuid"></param>
-    internal async void Disconnect(string uuid)
+    internal int Disconnect(string uuid)
     {
         ConnectedDict.Remove(uuid);
-        await _hlp.StopAll();
+        return ConnectedDict.Count;
     }
 
     /// <summary>
@@ -89,13 +85,13 @@ public class VehicleBluetoothService(IBleManager _bt, GeoFencingService _geo, Se
     /// If enabling scan while enabled, restart with refreshed device list.
     /// </summary>
     /// <param name="enabled"></param>
-    internal async void SetEnabled(bool enabled)
+    internal void SetEnabled(bool enabled)
     {
         if (enabled)
         {
             if (_bt.IsScanning) _bt.StopScan();
             // get devices to scan for and start scan
-            var deviceEnum = await GetRegisteredDevices();
+            var deviceEnum = GetRegisteredDevices();
             var devices = deviceEnum.Select(dev => dev.DeviceId).ToArray() ?? [];
             if (devices.Length != 0)
             {
@@ -106,6 +102,39 @@ public class VehicleBluetoothService(IBleManager _bt, GeoFencingService _geo, Se
         else
         {
             _bt.StopScan();
+        }
+    }
+
+    /// <summary>
+    /// Add registered device.
+    /// </summary>
+    /// <param name="device"></param>
+    public async void RegisterCar(CarBtDevice device)
+    {
+        var add = new Api.PbAddVehicle
+        {
+            DeviceId = device.DeviceId,
+            LicensePlate = device.RegNumber,
+            Name = device.DeviceName
+        };
+        var result = await _api.AddVehicle(add);
+        if (result is Api.PbVehicle vehicle)
+        {
+            _data?.Settings?.Vehicles.Add(vehicle);
+        }
+    }
+
+    /// <summary>
+    /// Remove by bt device id
+    /// </summary>
+    /// <param name="devId"></param>
+    public async void RemoveCar(string devId)
+    {
+        var found = _data?.Settings?.Vehicles.Where(item => item.DeviceId == devId).FirstOrDefault();
+        if (found != null)
+        {
+            await _api.DeleteVehicle(found.Id);
+            _data?.Settings?.Vehicles.Remove(found);
         }
     }
 }

@@ -26,22 +26,29 @@ public class ManageDevicesPageVm : BaseVm
         UnregisterDevice = new Command<CarBtDevice>(ExecuteUnregisterDevice);
     }
 
-    protected override async void ExecuteLoadModelCommand()
+    protected override void ExecuteLoadModelCommand()
     {
         PairedDevices.Clear();
         RegisteredCars.Clear();
-
-        _bt.GetPairedDevices().Aggregate(PairedDevices, (devices, device) =>
+        List<string> regUuid = [];
+        var regCars = _bt.GetRegisteredDevices();
+        regCars.Aggregate(RegisteredCars, (cars, car) =>
         {
-            devices.Add(device);
-            return devices;
-        });
-        var regCars = await _bt.GetRegisteredDevices();
-        regCars?.Aggregate(RegisteredCars, (cars, car) =>
-        {
+            regUuid.Add(car.DeviceId);
             cars.Add(car);
             return cars;
         });
+
+        _bt.GetPairedDevices().Aggregate(PairedDevices, (devices, device) =>
+        {
+            if (!regUuid.Contains(device.DeviceId))
+            {
+                // do not add registered to paired list
+                devices.Add(device);
+            }
+            return devices;
+        });
+
     }
 
     private async void ExecuteRegisterDevice(BtDevice device)
@@ -58,21 +65,29 @@ public class ManageDevicesPageVm : BaseVm
                 if (reg == null) break;
                 else if (IsValidLicensePlate(reg))
                 {
-                    RegisteredCars.Add(new(reg, device));
-                    PairedDevices.Remove(device);
-                    break;
+                    _bt.RegisterCar(new CarBtDevice(reg, device));
+                    LoadModelCommand.Execute(this);
+                    return;
                 }
             }
         }
     }
-    private static bool IsValidLicensePlate(string licensePlate)
+    /// <summary>
+    /// Valid format and not conflicting.
+    /// </summary>
+    /// <param name="licensePlate"></param>
+    /// <returns></returns>
+    private bool IsValidLicensePlate(string licensePlate)
     {
-        return RegexUtils.LicensePlateRegex().IsMatch(licensePlate.Trim().ToUpper());
+        var plate = licensePlate.Trim().ToUpper();
+        var conflict = RegisteredCars.Where(item => item.RegNumber == plate).FirstOrDefault();
+        if (conflict != null) return false;
+        return RegexUtils.LicensePlateRegex().IsMatch(plate);
     }
 
     private void ExecuteUnregisterDevice(CarBtDevice device)
     {
-        RegisteredCars.Remove(device);
-        PairedDevices.Add(new(device.DeviceId, device.DeviceName));
+        _bt.RemoveCar(device.DeviceId);
+        LoadModelCommand.Execute(this);
     }
 }

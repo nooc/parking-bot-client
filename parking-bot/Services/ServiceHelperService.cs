@@ -1,5 +1,4 @@
 ﻿using ParkingBot.Exceptions;
-using ParkingBot.Models;
 using ParkingBot.Models.Parking;
 using ParkingBot.Properties;
 
@@ -9,27 +8,14 @@ using Shiny.Locations;
 
 namespace ParkingBot.Services;
 
-public partial class ServiceHelperService
+public partial class ServiceHelperService(IServiceProvider services, ServiceData _data)
 {
-    private readonly List<ParkingSite> Regions = [];
-    private Api.PbData? _Settings = null;
-
-    private Lazy<IGeofenceManager> _geo;
-    private Lazy<IGpsManager> _gps;
-    private Lazy<IJobManager> _job;
-    private Lazy<VehicleBluetoothService> _bt;
-    private Lazy<TollParkingService> _toll;
-    private Lazy<AppService> _api;
-
-    public ServiceHelperService(IServiceProvider services)
-    {
-        _geo = services.GetLazyService<IGeofenceManager>();
-        _gps = services.GetLazyService<IGpsManager>();
-        _job = services.GetLazyService<IJobManager>();
-        _bt = services.GetLazyService<VehicleBluetoothService>();
-        _toll = services.GetLazyService<TollParkingService>();
-        _api = services.GetLazyService<AppService>();
-    }
+    private Lazy<IGeofenceManager> _geo = services.GetLazyService<IGeofenceManager>();
+    private Lazy<IGpsManager> _gps = services.GetLazyService<IGpsManager>();
+    private Lazy<IJobManager> _job = services.GetLazyService<IJobManager>();
+    private Lazy<VehicleBluetoothService> _bt = services.GetLazyService<VehicleBluetoothService>();
+    private Lazy<TollParkingService> _toll = services.GetLazyService<TollParkingService>();
+    private Lazy<AppService> _api = services.GetLazyService<AppService>();
 
     public void RequestAccess()
     {
@@ -68,29 +54,32 @@ public partial class ServiceHelperService
         _bt.Value.SetEnabled(false);
         await _gps.Value.StopListener();
         await _geo.Value.StopAllMonitoring();
-        if (_toll.Value.OngoingParking != null) _toll.Value.StopParking();
-    }
-
-    internal IList<ParkingSite> GetRegions()
-    {
-        return Regions;
-    }
-
-    internal async Task<Api.PbData?> GetSettings()
-    {
-        if (_Settings == null)
+        foreach (var (k, v) in _data.ParkingSites)
         {
-            _Settings = await _api.Value.GetData();
+            if (v is ParkingSite site && site.Parked)
+            {
+                _toll.Value.StopParking(site);
+            }
         }
-        return _Settings;
     }
+
+    /// <summary>
+    /// Get settings from api.
+    /// </summary>
+    /// <param name="force"></param>
+    internal async void GetSettings(bool force = false)
+    {
+        if (!(_data.Settings == null || force)) return;
+
+        _data.Settings = await _api.Value.GetData();
+    }
+
 
     public bool IsServiceConfigured
     {
         get
         {
-            // TODO: check if all services are configured
-            return false;
+            return _data.Settings != null;
         }
     }
 }

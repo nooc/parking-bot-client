@@ -2,4 +2,5 @@
 
 public class SMSParkingResult
 {
+    public required string AreaCode { get; set; }
 }

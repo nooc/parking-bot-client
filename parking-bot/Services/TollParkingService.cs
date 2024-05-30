@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
+using ParkingBot.Models.Bt;
 using ParkingBot.Models.Parking;
 using ParkingBot.Properties;
 
@@ -7,30 +8,15 @@ using System.Text.Json;
 
 namespace ParkingBot.Services;
 
-public class TollParkingService
+public class TollParkingService(ILogger<TollParkingService> _logger, SmsService _sms, VehicleBluetoothService _bt)
 {
-    private static readonly string HISTORY_KEY = "sms-history";
-    private static readonly string ONGOING_SMS_KEY = "ongoing-sms";
-
-    private readonly ILogger _logger;
-    private readonly IList<TollParkingTicket> _history;
-    private readonly SmsService _sms;
-    private readonly GothenburgOpenDataService _opendata;
+    private static readonly string HISTORY_KEY = "toll.history";
+    private static readonly string ONGOING_KEY = "ongoing.toll";
 
     public ParkingTicket? OngoingParking => GetOngoing();
-    public IList<ParkingTicket> History => new List<ParkingTicket>();
+    public IList<TollParkingTicket> History => JsonSerializer.Deserialize<List<TollParkingTicket>>(Preferences.Get(HISTORY_KEY, "[]")) ?? [];
 
-    public TollParkingService(ILogger<TollParkingService> logger, GothenburgOpenDataService opendata, SmsService sms)
-    {
-        _logger = logger;
-        _opendata = opendata;
-        _history = JsonSerializer.Deserialize<List<TollParkingTicket>>(Preferences.Get(HISTORY_KEY, "[]")) ?? Enumerable.Empty<TollParkingTicket>().ToList();
-        _sms = sms;
-    }
-
-
-
-    public async Task<ParkingTicket?> ParkAsync(string plate, TollSiteInfo site)
+    public async Task<TollParkingTicket?> ParkAsync(string plate, TollSiteInfo site)
     {
         var result = await _sms.SendMessage(
             recipient: Values.GBG_SMS_NUMBER,
@@ -44,26 +30,24 @@ public class TollParkingService
         {
             var ticket = new TollParkingTicket
             {
+                Uuid = Guid.NewGuid().ToString(),
                 Start = DateTime.UtcNow,
                 PlateNumber = plate,
-                ParkingResult = new SMSParkingResult()
+                ParkingResult = new()
+                {
+                    AreaCode = site.PhoneParkingCode ?? string.Empty
+                }
             };
-            _history.Insert(0, ticket);
-            while (_history.Count > Values.MAX_HISTORY)
-            {
-                _history.RemoveAt(Values.MAX_HISTORY);
-            }
-            Preferences.Set(HISTORY_KEY, JsonSerializer.Serialize(_history));
-            Preferences.Set(ONGOING_SMS_KEY, JsonSerializer.Serialize(ticket));
+            AddHistory(ticket);
 
             return ticket;
         }
         return null;
     }
 
-    private ParkingTicket? GetOngoing()
+    private TollParkingTicket? GetOngoing()
     {
-        var saved = Preferences.Get(ONGOING_SMS_KEY, string.Empty);
+        var saved = Preferences.Get(ONGOING_KEY, string.Empty);
         try
         {
             if (saved != null && !saved.Equals(string.Empty))
@@ -87,25 +71,54 @@ public class TollParkingService
     /// <summary>
     /// Stop parking if ongoing parking, otherwise do nothing.
     /// </summary>
-    public async void StopParking()
+    public async void StopParking(ParkingSite site, bool force = false)
     {
-        var ongoing = OngoingParking as TollParkingTicket;
-        if (ongoing != null)
+        if (site.SiteInfo is TollSiteInfo info)
         {
-            var endParkingMessage = Values.GBG_SMS_STOP_TEMPLATE;
-            if (endParkingMessage != null)
+            if (force)
             {
+                // stop all
+                var endParkingMessage = Values.GBG_SMS_STOP_TEMPLATE;
                 await _sms.SendMessage(
                     recipient: Values.GBG_SMS_NUMBER,
                     message: endParkingMessage,
                     tag: "stop");
             }
-            ClearParking();
+            else if (_bt.ConnectedCar is CarBtDevice car)
+            {
+                // TODO: stop for connected car
+                foreach (var ticket in History)
+                {
+                    if (ticket.PlateNumber == car.RegNumber)
+                    {
+                        var endParkingMessage = RenderMessage(Values.GBG_SMS_STOP_TEMPLATE_SPEC, ticket.PlateNumber, Values.GBG_SMS_NUMBER);
+                        await _sms.SendMessage(
+                            recipient: Values.GBG_SMS_NUMBER,
+                            message: endParkingMessage,
+                            tag: "stop");
+                    }
+                }
+            }
         }
     }
 
-    internal void ClearParking()
+    private void AddHistory(TollParkingTicket ticket)
     {
-        Preferences.Remove(ONGOING_SMS_KEY);
+        var hist = History;
+        hist.Insert(0, ticket);
+        Preferences.Set(HISTORY_KEY, JsonSerializer.Serialize(hist));
+    }
+
+    private void UpdateHistory(TollParkingTicket ticket)
+    {
+        var hist = History;
+        foreach (var item in hist)
+        {
+            if (ticket.Uuid == item.Uuid)
+            {
+                item.Stop = ticket.Stop;
+            }
+        }
+        Preferences.Set(HISTORY_KEY, JsonSerializer.Serialize(hist));
     }
 }

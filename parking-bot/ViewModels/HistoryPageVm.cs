@@ -21,7 +21,7 @@ public class HistoryPageVm(ILogger<HistoryPageVm> logger,
         List<ParkingTicket> history = [];
         //history.AddRange(_kiosk.History);
         history.AddRange(_toll.History);
-        history.Sort((a, b) => a.End?.CompareTo(b.End ?? DateTime.MaxValue) ?? 0);
+        history.Sort((a, b) => a.Stop?.CompareTo(b.Stop ?? DateTime.MaxValue) ?? 0);
         history.ForEach(History.Add);
     }
 }

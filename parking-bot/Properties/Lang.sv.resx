@@ -258,4 +258,7 @@
   <data name="phone_hint" xml:space="preserve">
     <value>07xxxxxxxx</value>
   </data>
+  <data name="parking_stopped" xml:space="preserve">
+    <value>Parkering har avslutats.</value>
+  </data>
 </root>

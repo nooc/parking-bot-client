@@ -33,8 +33,9 @@ public static class MauiProgram
 
         IServiceCollection isc = builder.Services;
 
-        // Shiny
-        isc.AddGps<MultiDelegate>()
+        isc.AddSingleton<ServiceData>()
+            // Shiny
+            .AddGps<MultiDelegate>()
             .AddGeofencing<MultiDelegate>()
             .AddNotifications<MultiDelegate>()
             .AddBluetoothLE<MultiDelegate>()

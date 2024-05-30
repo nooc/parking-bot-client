@@ -17,7 +17,7 @@
                     <DataTemplate x:DataType="m:ParkingTicket">
                         <VerticalStackLayout>
                             <Label Text="{Binding Start}" />
-                            <Label Text="{Binding End}" />
+                            <Label Text="{Binding Stop}" />
                             <Label Text="{Binding PlateNumber}" />
                         </VerticalStackLayout>
                     </DataTemplate>

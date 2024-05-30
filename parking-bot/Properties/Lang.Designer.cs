@@ -331,6 +331,15 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Parking Stopped..
+        /// </summary>
+        internal static string parking_stopped {
+            get {
+                return ResourceManager.GetString("parking_stopped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Permission requirements not met..
         /// </summary>
         internal static string perm_not_met {

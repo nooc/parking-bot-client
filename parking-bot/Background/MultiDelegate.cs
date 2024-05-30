@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 
 using ParkingBot.Background;
+using ParkingBot.Models.Parking;
 using ParkingBot.Properties;
 using ParkingBot.Services;
+using ParkingBot.Util;
 
 using Shiny;
 using Shiny.BluetoothLE;
@@ -10,14 +12,12 @@ using Shiny.Jobs;
 using Shiny.Locations;
 using Shiny.Notifications;
 
-using System.Text.Json;
-
 namespace ParkingBot.Handlers;
 
-public class MultiDelegate(ILogger<MultiDelegate> _logger, IGpsManager _gps, IGeofenceManager _geo, IJobManager _jobs,
+public class MultiDelegate(ILogger<MultiDelegate> _logger, IJobManager _jobs,
         //KioskParkingService _kiosk,
         VehicleBluetoothService _bt,
-        TollParkingService _toll, ServiceHelperService _hlp)
+        ServiceData _data)
     : IBleDelegate, IGeofenceDelegate, IGpsDelegate, INotificationDelegate
 {
     // NOTIFICATIONS
@@ -28,99 +28,90 @@ public class MultiDelegate(ILogger<MultiDelegate> _logger, IGpsManager _gps, IGe
 
     // GPS
     // Gps update event handler for when inside a region.
-    public async Task OnReading(GpsReading reading)
+    public Task OnReading(GpsReading reading)
     {
         _logger.LogInformation("On gps reading");
         // must have connected car
         var car = _bt.ConnectedCar;
         if (car != null && reading.PositionAccuracy <= Values.GPS_MIN_ACCURACY)
         {
-            // check that no ongoing parking exists
-            if (_toll.OngoingParking == null && !_jobs.IsRunning)
+            foreach (var (k, v) in _data.ParkingSites)
             {
-                var settings = await _hlp.GetSettings();
-                if (settings?.User.Phone == null)
-                {
-                    _logger.LogError("User phone not set.");
-                    return;
-                }
-                // for all regions
-                var today = DateTime.Now.DayOfWeek;
-                foreach (var region in _geo.GetMonitorRegions())
-                {
-                    // if inside region
-                    if (region is GeoFencingService.SiteRegion sRegion && sRegion.State == GeofenceState.Entered)
-                    {
-                        //TODO: polygon check if poly data
+                // check parking area occupancy
 
-                        // get distance to region center
-                        var dist = reading.Position.GetDistanceTo(region.Center);
-                        // check distance
-                        if (dist.TotalMeters <= Values.GPS_MAX_DISTANCE)
-                        {
-                            // do parking
-                            Dictionary<string, string> jobParams = new()
-                            {
-                                { "site", JsonSerializer.Serialize(sRegion.Site) },
-                                { "site_type", "toll" },
-                                { "car", JsonSerializer.Serialize(car) },
-                                { "phone", settings.User.Phone },
-                            };
-                            _jobs.Register(new JobInfo(Values.PARKING_JOB, typeof(ParkingJob), false, jobParams));
-                        }
-                    }
+                if (v.Parked && !GeoTools.Intersect(reading.Position, reading.PositionAccuracy, v))
+                {
+                    // parked and not intersecting
+                    Dictionary<string, string> jobParams = new()
+                    {
+                        { "site", v.Identifier },
+                        { "car", car.RegNumber },
+                        { "action", "stop" }
+                    };
+                    _jobs.Register(new JobInfo($"{nameof(ParkingJob)}_stop", typeof(ParkingJob), false, jobParams));
+                }
+                else if (!v.Parked && GeoTools.Intersect(reading.Position, reading.PositionAccuracy, v))
+                {
+                    // not parked and intersecting
+                    Dictionary<string, string> jobParams = new()
+                    {
+                        { "site", v.Identifier },
+                        { "car", car.RegNumber },
+                        { "action", "start" }
+                    };
+                    _jobs.Register(new JobInfo($"{nameof(ParkingJob)}_start", typeof(ParkingJob), false, jobParams));
                 }
             }
         }
+        return Task.CompletedTask;
     }
 
     // GEO FENCING
-    // Region intersection event handler for whe parking engine is active.
-    public async Task OnStatusChanged(GeofenceState newStatus, GeofenceRegion region)
+    // Region intersection event handler for when parking engine is active.
+    public Task OnStatusChanged(GeofenceState newStatus, GeofenceRegion region)
     {
-        if (region is GeoFencingService.SiteRegion kregion) kregion.State = newStatus;
-
-        if (newStatus == GeofenceState.Entered)
+        Dictionary<string, string> jobParams = new()
         {
-            // Start listening if not already.
-            if (_gps.CurrentListener == null)
-            {
-                await _gps.StartListener(GpsRequest.Realtime(true));
-            }
-        }
-        else if (newStatus == GeofenceState.Exited)
-        {
-            // remove parking
-            if (_toll.OngoingParking != null)
-            {
-                _toll.StopParking();
-            }
+            { "identifier", region.Identifier },
+        };
 
-            // Do not stop listener if there are other active (entered) regions.
-            foreach (var r in _geo.GetMonitorRegions())
+        if (region is ParkingSite site)
+        {
+            if (newStatus == GeofenceState.Entered)
             {
-                if (r is GeoFencingService.SiteRegion _region && _region.State == GeofenceState.Entered)
-                {
-                    return;
-                }
+                site.Intersecting = true;
             }
-            await _gps.StopListener();
+            else if (newStatus == GeofenceState.Exited)
+            {
+                site.Intersecting = false;
+            }
+            else return Task.CompletedTask;
+
+            _jobs.Register(new JobInfo(nameof(GeofenceEventJob), typeof(GeofenceEventJob), false, jobParams));
         }
+        return Task.CompletedTask;
     }
 
     // BLUETOOTH
     // Parking actions should only occure while we have a device connection. 
     public Task OnPeripheralStateChanged(IPeripheral peripheral)
     {
+        Dictionary<string, string> jobParams = new()
+        {
+            { "uuid", peripheral.Uuid },
+            { "name", peripheral.Name??string.Empty }
+        };
+
         if (peripheral.Status == ConnectionState.Connected)
         {
-            _bt.Connect(peripheral.Uuid, peripheral.Name);
+            jobParams.Add("state", "connected");
         }
         else if (peripheral.Status == ConnectionState.Disconnected)
         {
-            _bt.Disconnect(peripheral.Uuid);
+            jobParams.Add("state", "disconnected");
         }
-
+        else return Task.CompletedTask;
+        _jobs.Register(new JobInfo(nameof(DeviceEventJob), typeof(DeviceEventJob), false, jobParams));
         return Task.CompletedTask;
     }
 
