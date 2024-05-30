@@ -1,76 +1,45 @@
-﻿using ParkingBot.Properties;
+﻿using ParkingBot.Exceptions;
+using ParkingBot.Models;
+using ParkingBot.Models.Parking;
+using ParkingBot.Properties;
 
 using Shiny;
-using Shiny.BluetoothLE;
 using Shiny.Jobs;
 using Shiny.Locations;
 
-using System.Text.RegularExpressions;
-
 namespace ParkingBot.Services;
 
-public class ServiceHelperService
+public partial class ServiceHelperService
 {
-    private readonly Regex phoneRe;
-    private readonly IGeofenceManager _geo;
-    private readonly IGpsManager _gps;
-    private readonly IJobManager _job;
-    private readonly IBleManager _ble;
-    private readonly TollParkingService _sms;
+    private readonly List<ParkingSite> Regions = [];
+    private Api.PbData? _Settings = null;
 
-    public ServiceHelperService(IGeofenceManager geoFencer, IGpsManager gpsManager, IJobManager jobManager, IBleManager ble, TollParkingService sms)
+    private Lazy<IGeofenceManager> _geo;
+    private Lazy<IGpsManager> _gps;
+    private Lazy<IJobManager> _job;
+    private Lazy<VehicleBluetoothService> _bt;
+    private Lazy<TollParkingService> _toll;
+    private Lazy<AppService> _api;
+
+    public ServiceHelperService(IServiceProvider services)
     {
-        _geo = geoFencer;
-        _gps = gpsManager;
-        _job = jobManager;
-        _sms = sms;
-        _ble = ble;
-
-        phoneRe = new("^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$");
+        _geo = services.GetLazyService<IGeofenceManager>();
+        _gps = services.GetLazyService<IGpsManager>();
+        _job = services.GetLazyService<IJobManager>();
+        _bt = services.GetLazyService<VehicleBluetoothService>();
+        _toll = services.GetLazyService<TollParkingService>();
+        _api = services.GetLazyService<AppService>();
     }
 
-    public async Task<bool> HasSettingsPrerequisites()
+    public void RequestAccess()
     {
-        string plate = Preferences.Get(Values.PARKING_LICENSEPLATE_KEY, string.Empty).Trim();
-        string phone = Preferences.Get(Values.PARKING_PHONE_KEY, string.Empty).Trim();
-        bool reminder = Preferences.Get(Values.PARKING_REMINDER_KEY, false);
-        if (plate.IsEmpty())
-        {
-            if (Application.Current?.MainPage is Page page)
-                await page.DisplayAlert(Lang.error, Lang.plate_format_error, Lang.exit);
-            return false;
-        }
-        if (reminder && !phoneRe.IsMatch(phone))
-        {
-            if (Application.Current?.MainPage is Page page)
-                await page.DisplayAlert(Lang.error, Lang.phone_format_error, Lang.exit);
-            return false;
-        }
-        return true;
-
+        AssertAccessState("Bluetooth", _bt.Value.RequestAccessAsync());
+        AssertAccessState("Background Jobs", _job.Value.RequestAccess());
+        AssertAccessState("Location", _geo.Value.RequestAccess());
+        AssertAccessState("Gps", _gps.Value.RequestAccess(GpsRequest.Realtime(true)));
     }
 
-    public async Task<bool> RequestAccess()
-    {
-        try
-        {
-            AssertAccessState("Bluetooth", _ble.RequestAccessAsync());
-            AssertAccessState("Background Jobs", _job.RequestAccess());
-            AssertAccessState("Location", _geo.RequestAccess());
-            AssertAccessState("Gps", _gps.RequestAccess(GpsRequest.Realtime(true)));
-        }
-        catch (Exception ex)
-        {
-            if (Application.Current?.MainPage is Page page)
-            {
-                await page.DisplayAlert(Lang.insuf_perm, ex.Message, Lang.exit);
-            }
-            return false;
-        }
-        return true;
-    }
-
-    private async void AssertAccessState(string source, Task<AccessState> statusTask)
+    private static async void AssertAccessState(string source, Task<AccessState> statusTask)
     {
         var status = await statusTask;
         switch (status)
@@ -79,17 +48,49 @@ public class ServiceHelperService
                 return;
             case AccessState.NotSupported:
             case AccessState.NotSetup:
-                throw new NotSupportedException($"{source}: {Lang.not_supported_msg}");
+                throw new ApplicationPermissionError(source, Lang.not_supported_msg);
             default:
-                throw new Shiny.PermissionException($"{source}: {Lang.permission_error_msg}", status);
+                throw new ApplicationPermissionError(source, Lang.permission_error_msg);
         }
     }
 
-    public async Task StopAll()
+    internal async void Start()
     {
-        _job.CancelAll();
-        await _gps.StopListener();
-        await _geo.StopAllMonitoring();
-        if (_sms.OngoingParking != null) _sms.StopParking();
+        Preferences.Set(Values.SRV_IS_ACTIVE, true);
+        await _api.Value.InitUser();
+        _bt.Value.SetEnabled(true);
+    }
+
+    internal async Task StopAll()
+    {
+        Preferences.Set(Values.SRV_IS_ACTIVE, false);
+        _job.Value.CancelAll();
+        _bt.Value.SetEnabled(false);
+        await _gps.Value.StopListener();
+        await _geo.Value.StopAllMonitoring();
+        if (_toll.Value.OngoingParking != null) _toll.Value.StopParking();
+    }
+
+    internal IList<ParkingSite> GetRegions()
+    {
+        return Regions;
+    }
+
+    internal async Task<Api.PbData?> GetSettings()
+    {
+        if (_Settings == null)
+        {
+            _Settings = await _api.Value.GetData();
+        }
+        return _Settings;
+    }
+
+    public bool IsServiceConfigured
+    {
+        get
+        {
+            // TODO: check if all services are configured
+            return false;
+        }
     }
 }

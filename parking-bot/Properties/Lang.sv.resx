@@ -186,11 +186,8 @@
   <data name="settings_error" xml:space="preserve">
     <value>Fel i inställningarna.</value>
   </data>
-  <data name="sms_parking" xml:space="preserve">
-    <value>SMS Parking</value>
-  </data>
   <data name="sms_prereq" xml:space="preserve">
-    <value>Du behöver ha ett konto hos Parkering Göteborg.</value>
+    <value>Du behöver ha skapar ett konto med samma telefonnummer hos &lt;a href="https://www.parkeringgoteborg.se/"&gt;Parkering Göteborg&lt;/a&gt;.</value>
   </data>
   <data name="error" xml:space="preserve">
     <value>Fel</value>
@@ -218,5 +215,47 @@
   </data>
   <data name="permission_error_msg" xml:space="preserve">
     <value>Rättighetsfel</value>
+  </data>
+  <data name="service" xml:space="preserve">
+    <value>Tjänst</value>
+  </data>
+  <data name="map" xml:space="preserve">
+    <value>Karta</value>
+  </data>
+  <data name="status_" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="manage_dev" xml:space="preserve">
+    <value>Hantera BT Enheter</value>
+  </data>
+  <data name="dev_list" xml:space="preserve">
+    <value>Registrerade Enheter</value>
+  </data>
+  <data name="reg_dev_list" xml:space="preserve">
+    <value>Registrerade Enheter</value>
+  </data>
+  <data name="pair_dev_list" xml:space="preserve">
+    <value>Parkopplade Enheter</value>
+  </data>
+  <data name="manage_device_text" xml:space="preserve">
+    <value>Lägg till elelr ta bort registrerade enheter. För att registrera en enhet behöver den vara parkopplad till denna enhet.</value>
+  </data>
+  <data name="kiosk_parking" xml:space="preserve">
+    <value>Kiosk-parkering</value>
+  </data>
+  <data name="add_kiosk" xml:space="preserve">
+    <value>Lägg Till Kiosk Id</value>
+  </data>
+  <data name="exists" xml:space="preserve">
+    <value>Finns redan</value>
+  </data>
+  <data name="_already_exists_fmt" xml:space="preserve">
+    <value>{} finns redan.</value>
+  </data>
+  <data name="parking_started" xml:space="preserve">
+    <value>Parkering startad.</value>
+  </data>
+  <data name="phone_hint" xml:space="preserve">
+    <value>07xxxxxxxx</value>
   </data>
 </root>

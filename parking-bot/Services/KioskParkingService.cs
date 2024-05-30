@@ -1,15 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿namespace ParkingBot.Services;
 
-using ParkingBot.Factories;
-using ParkingBot.Models.Parking;
-using ParkingBot.Models.Response;
-using ParkingBot.Properties;
-
-using System.Net.Http.Json;
-using System.Text.Json;
-
-namespace ParkingBot.Services;
-
+/* TODO KioskParkingService
+{
 public class KioskParkingService
 {
     private static readonly string HISTORY_KEY = "kiosk-history";
@@ -17,7 +9,6 @@ public class KioskParkingService
     private readonly HttpClient _http;
     private readonly ILogger<KioskParkingService> _logger;
     private readonly IList<KioskParkingTicket> _history;
-    private readonly ParkingSettings _settings;
 
     public ParkingTicket? OngoingParking
     {
@@ -39,42 +30,42 @@ public class KioskParkingService
 
     public IList<ParkingTicket> History => _history.Select(item => item as ParkingTicket).ToList();
 
-    public KioskParkingService(ILogger<KioskParkingService> logger, HttpClient httpClient, ParkingSettingsFactoryService parkingSettingsFactory)
+    public KioskParkingService(ILogger<KioskParkingService> logger, Http.HttpClientExt httpClient)
     {
         _http = httpClient;
         _logger = logger;
         _history = JsonSerializer.Deserialize<List<KioskParkingTicket>>(Preferences.Get(HISTORY_KEY, "[]")) ?? Enumerable.Empty<KioskParkingTicket>().ToList();
-        _settings = parkingSettingsFactory.Instance;
     }
 
 
     /// <summary>
-    /// Get current site info.
-    /// If weekend, get kiosk variant, else toll variant.
+    /// Get kiosk site info.
     /// </summary>
     /// <returns></returns>
-    public async Task<ISiteInfo?> GetSiteInfoAsync(KioskSite site)
+    public async Task<KioskSiteInfo?> GetSiteInfoAsync(string externalId)
     {
         _logger.LogInformation("KioskParkingService.GetSiteInfoAsync()");
-        return await _http.GetFromJsonAsync<KioskSiteInfo>($"{_settings.Kiosk?.Endpoint}/external?externalId={site.ExternalId}");
+        return await _http.GetFromJsonAsync<KioskSiteInfo>($"{Values.GBG_BASE_KIOSK_URI}/external?externalId={externalId}");
     }
 
-    public Task<KioskSiteStatus?> GetKioskSiteStatusAsync(KioskSite site)
+    public Task<KioskSiteStatus?> GetKioskSiteStatusAsync(string externalId)
     {
         _logger.LogInformation("KioskParkingService.GetKioskSiteStatusAsync()");
-        return _http.GetFromJsonAsync<KioskSiteStatus>($"{_settings.Kiosk?.Endpoint}/status?externalId={site.ExternalId}");
+        return _http.GetFromJsonAsync<KioskSiteStatus>($"{Values.GBG_BASE_KIOSK_URI}/status?externalId={externalId}");
     }
 
-    public async Task<ParkingTicket?> ParkAsync(KioskParkingRequest request, KioskSite site)
+    public async Task<ParkingTicket?> ParkAsync(KioskParkingRequest request, string externalId)
     {
-        var result = await _http.PostAsJsonAsync($"{_settings.Kiosk?.Endpoint}/external/assignment?externalId={site.ExternalId}", request);
+        var result = await _http.PostAsJsonAsync($"{Values.GBG_BASE_KIOSK_URI}/external/assignment?externalId={externalId}", request);
         _logger.LogInformation("ParkAsync posted KioskParkingRequest and got {}.", result.StatusCode);
 
         if (result.IsSuccessStatusCode)
         {
+            var dt = DateTime.UtcNow;
             var parking = new KioskParkingTicket
             {
-                Timestamp = DateTime.Now,
+                Start = dt,
+                End = dt.AddHours(2), //TODO get from kiosk description
                 ParkingResult = await result.Content.ReadFromJsonAsync<KioskParkingResult>(),
                 PlateNumber = request.registrationNumber
             };
@@ -92,3 +83,4 @@ public class KioskParkingService
         }
     }
 }
+*/

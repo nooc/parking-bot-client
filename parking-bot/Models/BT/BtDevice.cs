@@ -1,7 +1,7 @@
 ﻿namespace ParkingBot.Models.Bt;
 
-public class BtDevice
+public class BtDevice(string deviceId, string deviceName)
 {
-    public required string DeviceId { get; set; }
-    public required string DeviceName { get; set; }
+    public string DeviceId { get; } = deviceId;
+    public string DeviceName { get; set; } = deviceName;
 }

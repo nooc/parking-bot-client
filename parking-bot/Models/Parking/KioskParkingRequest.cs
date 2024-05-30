@@ -1,5 +1,6 @@
 ﻿namespace ParkingBot.Models.Parking;
 
+/* TODO KioskParkingRequest
 public sealed class KioskParkingRequest
 {
     public required string externalId { get; set; }
@@ -8,3 +9,4 @@ public sealed class KioskParkingRequest
     public required string phoneNumber { get; set; }
     public required bool setEndTimeReminder { get; set; }
 }
+*/

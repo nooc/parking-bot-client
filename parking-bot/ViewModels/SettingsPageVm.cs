@@ -1,19 +1,22 @@
-﻿using ParkingBot.Properties;
+﻿using Microsoft.Extensions.Logging;
+
+using ParkingBot.Models.Parking;
+using ParkingBot.Properties;
+
+using System.Collections.ObjectModel;
 
 namespace ParkingBot.ViewModels;
 
-public class SettingsPageVm : BaseVm
+public class SettingsPageVm(ILogger<SettingsPageVm> logger
+    //KioskParkingService kiosk,
+    //GothenburgOpenDataService opendata
+    ) : BaseVm(logger)
 {
-    private string? _LicensePlate;
     private string? _PhoneNumber;
     private bool _SendReminder;
-    private bool _SmsParking;
 
-    public string? LicensePlate
-    {
-        get => _LicensePlate;
-        set { StoreStringProperty(value, Values.PARKING_LICENSEPLATE_KEY); SetProperty(ref _LicensePlate, value); }
-    }
+    internal ObservableCollection<ParkingSite> KioskList { get; } = [];
+
     public string? PhoneNumber
     {
         get => _PhoneNumber;
@@ -24,30 +27,45 @@ public class SettingsPageVm : BaseVm
         get => _SendReminder;
         set { StorBoolProperty(value, Values.PARKING_REMINDER_KEY); SetProperty(ref _SendReminder, value); OnPropertyChanged(nameof(ReminderStateLabel)); }
     }
-    public bool SmsParking
-    {
-        get => _SmsParking;
-        set { StorBoolProperty(value, Values.PARKING_USE_SMS_PARKING_KEY); SetProperty(ref _SmsParking, value); OnPropertyChanged(nameof(SmsStateLabel)); }
-    }
     public string ReminderStateLabel => _SendReminder ? Lang.on : Lang.off;
-    public string SmsStateLabel => _SmsParking ? Lang.on : Lang.off;
 
-    public SettingsPageVm() : base() { }
-
-    private void StoreStringProperty(string? _val, string propertyName)
+    private static void StoreStringProperty(string? _val, string propertyName)
     {
         Preferences.Set(propertyName, _val?.Trim());
     }
-    private void StorBoolProperty(bool _val, string propertyName)
+    private static void StorBoolProperty(bool _val, string propertyName)
     {
         Preferences.Set(propertyName, _val);
     }
 
     protected override void ExecuteLoadModelCommand()
     {
-        _LicensePlate = Preferences.Get(Values.PARKING_LICENSEPLATE_KEY, null);
         _PhoneNumber = Preferences.Get(Values.PARKING_PHONE_KEY, null);
         _SendReminder = Preferences.Get(Values.PARKING_REMINDER_KEY, false);
-        _SmsParking = Preferences.Get(Values.PARKING_USE_SMS_PARKING_KEY, false);
+    }
+
+    internal bool HasKiosk(string id)
+    {
+        //TODO: identifier  is..?
+        return KioskList.First(site => site.Identifier.Equals(id)) != null;
+    }
+
+    internal void AddKiosk(string id)
+    {
+        // TODO: get kiosk info from opendata by id and if exists store/add to list
+        /*
+        var info = await kiosk.GetSiteInfoAsync(id);
+        if (info != null)
+        {
+            var result = await opendata.GetSiteInfoAsync(info.);
+            if (result != null)
+            {
+                var site = new ParkingSite(info.SiteId, result.)
+                site.SiteData = info;
+                site.Type = ParkingType.Kiosk;
+                KioskList.Add(site);
+            }
+        }*/
+        throw new NotImplementedException();
     }
 }

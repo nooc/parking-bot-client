@@ -4,23 +4,108 @@ using Shiny.BluetoothLE;
 
 namespace ParkingBot.Services;
 
-public class VehicleBluetoothService
+public class VehicleBluetoothService(IBleManager _bt, GeoFencingService _geo, ServiceHelperService _hlp)
 {
-    private readonly IBleManager _blueooth;
+    private readonly Dictionary<string, CarBtDevice> ConnectedDict = [];
 
-    public VehicleBluetoothService(IBleManager blueooth, ServiceHelperService access)
+    public CarBtDevice? ConnectedCar
     {
-        _blueooth = blueooth;
+        get
+        {
+            return ConnectedDict.FirstOrDefault().Value;
+        }
     }
 
+    internal async Task<Shiny.AccessState> RequestAccessAsync()
+    {
+        return await _bt.RequestAccessAsync();
+    }
+
+    /// <summary>
+    /// Get paired devices.
+    /// </summary>
+    /// <returns></returns>
     public IEnumerable<BtDevice> GetPairedDevices()
     {
-        var devices = _blueooth.TryGetPairedPeripherals();
-        return devices.Select(peripheral => new BtDevice { DeviceId = peripheral.Uuid, DeviceName = peripheral.Name ?? "???" });
+        var devices = _bt.TryGetPairedPeripherals();
+        return devices.Select(peripheral => new BtDevice(peripheral.Uuid, peripheral.Name ?? "???"));
     }
+
+    /// <summary>
+    /// Get connected devices.
+    /// </summary>
+    /// <returns></returns>
     public IEnumerable<BtDevice> GetConnectedDevices()
     {
-        var devices = _blueooth.TryGetPairedPeripherals();
-        return devices.Select(peripheral => new BtDevice { DeviceId = peripheral.Uuid, DeviceName = peripheral.Name ?? "???" });
+        var devices = _bt.TryGetPairedPeripherals();
+        return devices.Select(peripheral => new BtDevice(peripheral.Uuid, peripheral.Name ?? "???"));
+    }
+
+    /// <summary>
+    /// Get registered devices.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public async Task<IEnumerable<CarBtDevice>> GetRegisteredDevices()
+    {
+        var settings = await _hlp.GetSettings();
+        if (settings != null)
+        {
+            return settings.Vehicles.Select(v => new CarBtDevice(v.LicensePlate, v.DeviceId, v.Name));
+        }
+        return [];
+    }
+
+    /// <summary>
+    /// Add device and trigger action.
+    /// </summary>
+    /// <param name="uuid"></param>
+    /// <param name="name"></param>
+    internal async void Connect(string uuid, string? name)
+    {
+        var regList = await GetRegisteredDevices() ?? [];
+        foreach (var car in regList)
+        {
+            if (car.DeviceId == uuid)
+            {
+                ConnectedDict.Add(uuid, car);
+            }
+        }
+        await _geo.SetEnabled(true);
+    }
+
+    /// <summary>
+    /// Remove device and trigger action.
+    /// </summary>
+    /// <param name="uuid"></param>
+    internal async void Disconnect(string uuid)
+    {
+        ConnectedDict.Remove(uuid);
+        await _hlp.StopAll();
+    }
+
+    /// <summary>
+    /// Enable or disable scan.
+    /// If enabling scan while enabled, restart with refreshed device list.
+    /// </summary>
+    /// <param name="enabled"></param>
+    internal async void SetEnabled(bool enabled)
+    {
+        if (enabled)
+        {
+            if (_bt.IsScanning) _bt.StopScan();
+            // get devices to scan for and start scan
+            var deviceEnum = await GetRegisteredDevices();
+            var devices = deviceEnum.Select(dev => dev.DeviceId).ToArray() ?? [];
+            if (devices.Length != 0)
+            {
+                _bt.ScanForUniquePeripherals(
+                    new ScanConfig { ServiceUuids = devices });
+            }
+        }
+        else
+        {
+            _bt.StopScan();
+        }
     }
 }

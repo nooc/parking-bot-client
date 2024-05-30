@@ -9,9 +9,4 @@
             x:Class="ParkingBot.Pages.MainPage"
             x:DataType="vm:MainPageVm"
             Title="{x:Static p:Lang.app_title}">
-    
-    <TabbedPage.BindingContext>
-        <vm:MainPageVm />
-    </TabbedPage.BindingContext>
-    
 </TabbedPage>

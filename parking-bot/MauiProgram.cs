@@ -2,7 +2,6 @@
 
 using Microsoft.Extensions.Logging;
 
-using ParkingBot.Factories;
 using ParkingBot.Handlers;
 using ParkingBot.Pages;
 using ParkingBot.Services;
@@ -38,15 +37,16 @@ public static class MauiProgram
         isc.AddGps<MultiDelegate>()
             .AddGeofencing<MultiDelegate>()
             .AddNotifications<MultiDelegate>()
+            .AddBluetoothLE<MultiDelegate>()
             .AddJobs()
             // Clients
-            .AddSingleton(GetHttpClient())
-            // Settings
-            .AddSingleton<ParkingSettingsFactoryService>()
+            .AddSingleton<Http.HttpClientExt>()
+            .AddSingleton<Http.HttpClientInt>()
             // Services
-            .AddSingleton<UserAuthService>()
+            .AddSingleton<AppService>()
+            .AddSingleton<GothenburgOpenDataService>()
             .AddSingleton<VehicleBluetoothService>()
-            .AddSingleton<KioskParkingService>()
+            //.AddSingleton<KioskParkingService>()
             .AddSingleton<TollParkingService>()
             .AddSingleton<GeoFencingService>()
             .AddSingleton<ServiceHelperService>()
@@ -54,18 +54,20 @@ public static class MauiProgram
             // ViewModels
             .AddSingleton<MainPageVm>()
             .AddSingleton<ServiceStatusPageVm>()
-            .AddSingleton<ParkingMapPageVm>()
+            .AddSingleton<MapPageVm>()
             .AddSingleton<SettingsPageVm>()
             .AddSingleton<HistoryPageVm>()
             .AddSingleton<ManageDevicesPageVm>()
             // Views
-            .AddTransient<ParkingMapPage>()
+            .AddTransient<MapPage>()
             .AddTransient<ServiceStatusPage>()
             .AddTransient<HistoryPage>()
             .AddTransient<SettingsPage>()
             .AddTransient<AboutPage>()
             .AddTransient<MainPage>()
             .AddTransient<ManageDevicesPage>()
+            // Startup
+            .AddShinyService<PostInjetStartupService>()
         ;
 
 #if DEBUG
@@ -73,13 +75,5 @@ public static class MauiProgram
 #endif
 
         return builder.Build();
-    }
-
-    private static HttpClient GetHttpClient()
-    {
-        return new HttpClient
-        {
-            Timeout = TimeSpan.FromSeconds(5)
-        };
     }
 }

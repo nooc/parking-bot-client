@@ -1,12 +1,11 @@
-﻿namespace ParkingBot.ViewModels;
+﻿using Microsoft.Extensions.Logging;
 
-public class MainPageVm : BaseVm
+namespace ParkingBot.ViewModels;
+
+public class MainPageVm(ILogger<MainPageVm> logger) : BaseVm(logger)
 {
-    public MainPageVm() : base()
-    {
-    }
-
     protected override void ExecuteLoadModelCommand()
     {
+
     }
 }

@@ -61,11 +61,29 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {} already exists..
+        /// </summary>
+        internal static string _already_exists_fmt {
+            get {
+                return ResourceManager.GetString("_already_exists_fmt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
         internal static string about {
             get {
                 return ResourceManager.GetString("about", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Kiosk Id.
+        /// </summary>
+        internal static string add_kiosk {
+            get {
+                return ResourceManager.GetString("add_kiosk", resourceCulture);
             }
         }
         
@@ -106,6 +124,15 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Registered Devices.
+        /// </summary>
+        internal static string dev_list {
+            get {
+                return ResourceManager.GetString("dev_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ends at.
         /// </summary>
         internal static string ends_at {
@@ -120,6 +147,15 @@ namespace ParkingBot.Properties {
         internal static string error {
             get {
                 return ResourceManager.GetString("error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Already present.
+        /// </summary>
+        internal static string exists {
+            get {
+                return ResourceManager.GetString("exists", resourceCulture);
             }
         }
         
@@ -169,11 +205,47 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Kiosk Parking.
+        /// </summary>
+        internal static string kiosk_parking {
+            get {
+                return ResourceManager.GetString("kiosk_parking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to License Plate.
         /// </summary>
         internal static string license_plate {
             get {
                 return ResourceManager.GetString("license_plate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manage BT Devices.
+        /// </summary>
+        internal static string manage_dev {
+            get {
+                return ResourceManager.GetString("manage_dev", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add or remove registered devices. To register a device it has to be paired to this device..
+        /// </summary>
+        internal static string manage_device_text {
+            get {
+                return ResourceManager.GetString("manage_device_text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Map.
+        /// </summary>
+        internal static string map {
+            get {
+                return ResourceManager.GetString("map", resourceCulture);
             }
         }
         
@@ -232,20 +304,29 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Paired Devices.
+        /// </summary>
+        internal static string pair_dev_list {
+            get {
+                return ResourceManager.GetString("pair_dev_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parking started..
+        /// </summary>
+        internal static string parking_started {
+            get {
+                return ResourceManager.GetString("parking_started", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Parking started. Ends at.
         /// </summary>
         internal static string parking_started_ends_at {
             get {
                 return ResourceManager.GetString("parking_started_ends_at", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ABC123.
-        /// </summary>
-        internal static string pate_hint {
-            get {
-                return ResourceManager.GetString("pate_hint", resourceCulture);
             }
         }
         
@@ -277,7 +358,7 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 0701234567.
+        ///   Looks up a localized string similar to 07xxxxxxxx.
         /// </summary>
         internal static string phone_hint {
             get {
@@ -295,11 +376,29 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Registered Devices.
+        /// </summary>
+        internal static string reg_dev_list {
+            get {
+                return ResourceManager.GetString("reg_dev_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reminder.
         /// </summary>
         internal static string reminder {
             get {
                 return ResourceManager.GetString("reminder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Service.
+        /// </summary>
+        internal static string service {
+            get {
+                return ResourceManager.GetString("service", resourceCulture);
             }
         }
         
@@ -331,15 +430,6 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SMS Parking.
-        /// </summary>
-        internal static string sms_parking {
-            get {
-                return ResourceManager.GetString("sms_parking", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to SMS parking started in.
         /// </summary>
         internal static string sms_parking_started_in {
@@ -349,7 +439,7 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You need to have an account with Parkering Göteborg..
+        ///   Looks up a localized string similar to You need to have created an account containing the same phone number with &lt;a href=&quot;https://www.parkeringgoteborg.se/parking/&quot;&gt;Parkering Göteborg&lt;/a&gt;..
         /// </summary>
         internal static string sms_prereq {
             get {

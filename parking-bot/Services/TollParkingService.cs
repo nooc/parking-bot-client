@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 
-using ParkingBot.Factories;
 using ParkingBot.Models.Parking;
 using ParkingBot.Properties;
 
-using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace ParkingBot.Services;
@@ -15,69 +13,38 @@ public class TollParkingService
     private static readonly string ONGOING_SMS_KEY = "ongoing-sms";
 
     private readonly ILogger _logger;
-    private readonly IList<SMSParkingTicket> _history;
-    private readonly ParkingSettings _settings;
-    private readonly HttpClient _http;
+    private readonly IList<TollParkingTicket> _history;
     private readonly SmsService _sms;
+    private readonly GothenburgOpenDataService _opendata;
 
     public ParkingTicket? OngoingParking => GetOngoing();
     public IList<ParkingTicket> History => new List<ParkingTicket>();
 
-    public TollParkingService(ILogger<TollParkingService> logger, ParkingSettingsFactoryService parkingSettingsFactory, HttpClient http, SmsService sms)
+    public TollParkingService(ILogger<TollParkingService> logger, GothenburgOpenDataService opendata, SmsService sms)
     {
         _logger = logger;
-        _history = JsonSerializer.Deserialize<List<SMSParkingTicket>>(Preferences.Get(HISTORY_KEY, "[]")) ?? Enumerable.Empty<SMSParkingTicket>().ToList();
-        _settings = parkingSettingsFactory.Instance;
-        _http = http;
+        _opendata = opendata;
+        _history = JsonSerializer.Deserialize<List<TollParkingTicket>>(Preferences.Get(HISTORY_KEY, "[]")) ?? Enumerable.Empty<TollParkingTicket>().ToList();
         _sms = sms;
     }
 
-    public async Task<ISiteInfo?> GetSiteInfoAsync()
-    {
-        TollSiteInfo? selectedSite = null;
-        _logger.LogInformation("TollParkingService.GetSiteInfoAsync()");
-        var loc = await Geolocation.Default.GetLastKnownLocationAsync();
-        if (loc != null && _settings.Toll?.Endpoints is List<string> endpoints)
-        {
-            double selectedDist = 10000;
-            foreach (var endpoint in endpoints)
-            {
-                var sites = await _http.GetFromJsonAsync<List<TollSiteInfo>>(RenderUrl(endpoint, loc));
-                if (sites != null)
-                {
-                    foreach (var site in sites)
-                    {
-                        if (site != null)
-                        {
-                            var dist = Location.CalculateDistance(loc.Latitude, loc.Longitude, site.Lat, site.Long, DistanceUnits.Kilometers) * 1000;
-                            if (dist < selectedDist)
-                            {
-                                selectedDist = dist;
-                                selectedSite = site;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return selectedSite;
-    }
+
 
     public async Task<ParkingTicket?> ParkAsync(string plate, TollSiteInfo site)
     {
-        var message = RenderMessage(
-            _settings.Toll?.StartTemplate ?? string.Empty,
-            plate,
-            site.PhoneParkingCode ?? string.Empty);
         var result = await _sms.SendMessage(
-            recipient: _settings.Toll?.ServiceNumber ?? string.Empty,
-            message: message ?? string.Empty,
+            recipient: Values.GBG_SMS_NUMBER,
+            message: RenderMessage(
+                Values.GBG_SMS_START_TEMPLATE,
+                plate,
+                site.PhoneParkingCode ?? string.Empty
+                ),
             tag: "start");
         if (result)
         {
-            var ticket = new SMSParkingTicket
+            var ticket = new TollParkingTicket
             {
-                Timestamp = DateTime.Now,
+                Start = DateTime.UtcNow,
                 PlateNumber = plate,
                 ParkingResult = new SMSParkingResult()
             };
@@ -100,24 +67,16 @@ public class TollParkingService
         try
         {
             if (saved != null && !saved.Equals(string.Empty))
-                return JsonSerializer.Deserialize<SMSParkingTicket>(saved);
+                return JsonSerializer.Deserialize<TollParkingTicket>(saved);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Invaild SMSParkingTicket json");
+            _logger.LogWarning(ex, "Invalid TollParkingTicket json");
         }
         return null;
     }
 
-    private string RenderUrl(string template, Location loc)
-    {
 
-        return template
-            .Replace("{APPID}", _settings.AppId)
-            .Replace("{LATITUDE}", loc.Latitude.ToString())
-            .Replace("{LONGITUDE}", loc.Longitude.ToString())
-            .Replace("{RADIUS}", _settings.RegionRadius.ToString());
-    }
     private string RenderMessage(string template, string registrationPlate, string serviceNumber)
     {
         return template
@@ -130,14 +89,14 @@ public class TollParkingService
     /// </summary>
     public async void StopParking()
     {
-        var ongoing = OngoingParking as SMSParkingTicket;
+        var ongoing = OngoingParking as TollParkingTicket;
         if (ongoing != null)
         {
-            var endParkingMessage = _settings.Toll?.EndTemplate;
-            if (endParkingMessage != null && _settings.Toll?.ServiceNumber != null)
+            var endParkingMessage = Values.GBG_SMS_STOP_TEMPLATE;
+            if (endParkingMessage != null)
             {
                 await _sms.SendMessage(
-                    recipient: _settings.Toll.ServiceNumber,
+                    recipient: Values.GBG_SMS_NUMBER,
                     message: endParkingMessage,
                     tag: "stop");
             }
