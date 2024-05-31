@@ -42,4 +42,9 @@ public partial class SettingsPage : ContentPage
             }
         }
     }
+
+    protected override void OnAppearing()
+    {
+        Vm.LoadModelCommand.Execute(this);
+    }
 }

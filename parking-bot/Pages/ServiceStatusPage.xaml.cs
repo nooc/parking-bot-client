@@ -1,4 +1,7 @@
-﻿using ParkingBot.ViewModels;
+﻿using Microsoft.Extensions.Logging;
+
+using ParkingBot.Services;
+using ParkingBot.ViewModels;
 
 namespace ParkingBot.Pages;
 
@@ -6,9 +9,13 @@ public partial class ServiceStatusPage : ContentPage
 {
     private readonly ServiceStatusPageVm Vm;
     private readonly IDispatcherTimer Timer;
+    private readonly ILogger _logger;
+    private readonly ServiceHelperService _hlp;
 
-    public ServiceStatusPage(ServiceStatusPageVm viewMovel)
+    public ServiceStatusPage(ServiceStatusPageVm viewMovel, ILogger<ServiceStatusPage> logger, ServiceHelperService hlp)
     {
+        _hlp = hlp;
+        _logger = logger;
         Timer = Dispatcher.CreateTimer();
 
         InitializeComponent();
@@ -27,6 +34,15 @@ public partial class ServiceStatusPage : ContentPage
     {
         Vm.LoadModelCommand.Execute(this);
         Timer.Start();
+        try
+        {
+            _hlp.RequestAccess();
+            Vm.HasPermiddions = true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Permission error");
+        }
     }
 
     protected override void OnDisappearing()

@@ -12,6 +12,7 @@ public class ServiceStatusPageVm(ILogger<MainPageVm> logger, GeoFencingService _
         TollParkingService _toll)
         : BaseVm(logger)
 {
+    private bool _HasPermiddions = false;
     public bool IsActive
     {
         get => Preferences.Get(Values.SRV_IS_ACTIVE, false);
@@ -23,6 +24,7 @@ public class ServiceStatusPageVm(ILogger<MainPageVm> logger, GeoFencingService _
     public string Availability { get; private set; } = string.Empty;
     public string StatusText { get; private set; } = string.Empty;
     public string UserGreeting { get; private set; } = string.Empty;
+    public bool HasPermiddions { get => _HasPermiddions; set => SetProperty(ref _HasPermiddions, value); }
 
     protected async override void ExecuteLoadModelCommand()
     {

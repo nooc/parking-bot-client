@@ -62,7 +62,11 @@
 		<PackageReference Include="Shiny.Locations" Version="3.3.3" />
 		<PackageReference Include="Shiny.Notifications" Version="3.3.3" />
 	</ItemGroup>
-
+	
+	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
+		<BundleResource Include="Platforms\iOS\PrivacyInfo.xcprivacy" LogicalName="PrivacyInfo.xcprivacy" />
+	</ItemGroup>
+	
 	<ItemGroup>
 	  <Compile Update="Pages\MainPage.xaml.cs">
 	    <DependentUpon>MainPage.xaml</DependentUpon>
@@ -72,6 +76,9 @@
 	  </Compile>
 	  <Compile Update="Pages\ServiceStatusPage.xaml.cs">
 	    <DependentUpon>ServiceStatusPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Platforms\iOS\Services\BluetoothHelper.cs">
+	    <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
 	  </Compile>
 	  <Compile Update="Properties\Lang.Designer.cs">
 	    <DesignTime>True</DesignTime>

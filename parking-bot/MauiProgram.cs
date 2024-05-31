@@ -47,7 +47,7 @@ public static class MauiProgram
             .AddSingleton<AppService>()
             .AddSingleton<GothenburgOpenDataService>()
             .AddSingleton<VehicleBluetoothService>()
-            //.AddSingleton<KioskParkingService>()
+            .AddSingleton<BluetoothHelper>()
             .AddSingleton<TollParkingService>()
             .AddSingleton<GeoFencingService>()
             .AddSingleton<ServiceHelperService>()

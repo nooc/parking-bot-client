@@ -4,7 +4,9 @@ using Microsoft.IdentityModel.Tokens;
 using ParkingBot.Models;
 using ParkingBot.Properties;
 
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace ParkingBot.Services;
 
@@ -28,37 +30,58 @@ public class AppService(ILogger<AppService> logger, Http.HttpClientInt client)
         RequireAudience = true,
         ValidAudience = Values.JWT_AUD
     };
+    //private readonly JsonSerializerOptions JsonSerOpt = new() {
+    //};
+    private static readonly MediaTypeHeaderValue JsonType = new MediaTypeHeaderValue("application/json");
 
+    private StringContent serialize<T>(object obj)
+    {
+        return new StringContent(
+            JsonSerializer.Serialize(obj, typeof(T)),
+            mediaType: JsonType
+            );
+    }
+
+    private async Task<T?> Read<T>(HttpResponseMessage msg)
+    {
+        try
+        {
+            //logger.LogInformation(msg.RequestMessage?.ToString());
+            return await msg.EnsureSuccessStatusCode().Content.ReadFromJsonAsync<T>();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(msg.Headers.ToString(), ex);
+            logger.LogCritical(ex, "Failed to read response.");
+        }
+        return default;
+    }
 
     private async Task<T?> Get<T>(string url)
     {
         await InitUser();
         var result = await client.GetAsync(url);
-        var output = await result.EnsureSuccessStatusCode().Content.ReadFromJsonAsync<T>();
-        return output;
+        return await Read<T>(result);
     }
     private async Task<T?> Put<T, P>(string url, P data)
     {
         await InitUser();
-        var content = data != null ? JsonContent.Create<P>(data) : null;
+        var content = data != null ? serialize<P>(data) : null;
         var result = await client.PutAsync(url, content);
-        var output = await result.EnsureSuccessStatusCode().Content.ReadFromJsonAsync<T>();
-        return output;
+        return await Read<T>(result);
     }
     private async Task<T?> Post<T, P>(string url, P? data = default)
     {
         await InitUser();
-        var content = data != null ? JsonContent.Create<P>(data) : null;
+        var content = data != null ? serialize<P>(data) : null;
         var result = await client.PostAsync(url, content);
-        var output = await result.EnsureSuccessStatusCode().Content.ReadFromJsonAsync<T>();
-        return output;
+        return await Read<T>(result);
     }
     private async Task<string> Delete(string url)
     {
         await InitUser();
         var result = await client.DeleteAsync(url);
-        var output = await result.EnsureSuccessStatusCode().Content.ReadAsStringAsync();
-        return output;
+        return await result.EnsureSuccessStatusCode().Content.ReadAsStringAsync();
     }
 
     /// <summary>
@@ -68,16 +91,13 @@ public class AppService(ILogger<AppService> logger, Http.HttpClientInt client)
     /// <exception cref="HttpRequestException"></exception>
     public async Task<bool> InitUser()
     {
-        string? token = null;
-        if (client.BearerToken != null) token = client.BearerToken;
-        else token = Preferences.Get(Values.TOKEN_KEY, null);
-
+        string? token = Preferences.Get(Values.TOKEN_KEY, null);
         if (token != null)
         {
             var results = await TokenHandler.ValidateTokenAsync(token, ValidationParams);
             if (results.IsValid)
             {
-                if (client.BearerToken == null) client.BearerToken = token;
+                client.BearerToken = token;
                 return true;
             }
         }
@@ -89,9 +109,9 @@ public class AppService(ILogger<AppService> logger, Http.HttpClientInt client)
             {
                 { "identifier", AppIdentity.Id }
             },
-            IssuedAt = DateTime.UtcNow,
-            NotBefore = DateTime.UtcNow,
-            Expires = DateTime.UtcNow.AddMinutes(1),
+            IssuedAt = null,
+            NotBefore = null,
+            Expires = DateTime.UtcNow.AddMinutes(2),
             SigningCredentials = TokenCredentials,
             Audience = Values.JWT_AUD
         };
@@ -101,7 +121,7 @@ public class AppService(ILogger<AppService> logger, Http.HttpClientInt client)
             var req = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri($"{Values.APP_SERVICE_URI}/user/init"),
+                RequestUri = new Uri($"{Values.APP_SERVICE_URI}user/init"),
                 Headers = { { "Authorization", $"Bearer {initJwt}" } }
             };
             var result = await client.SendAsync(req);

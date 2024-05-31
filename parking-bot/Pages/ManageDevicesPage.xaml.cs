@@ -12,4 +12,9 @@ public partial class ManageDevicesPage : ContentPage
 
         BindingContext = Vm = viewModel;
     }
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        Vm.LoadModelCommand.Execute(this);
+    }
 }

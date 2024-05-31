@@ -32,12 +32,11 @@ public partial class MapPage : ContentPage
     {
         _locationUpdates = true;
         Dispatcher.StartTimer(TimeSpan.FromSeconds(4), UpdateLocation);
-        base.OnAppearing();
+        Vm.LoadModelCommand.Execute(this);
     }
     protected override void OnDisappearing()
     {
         _locationUpdates = false;
-        base.OnDisappearing();
     }
 
     private async void DoUpdateLocation()

@@ -47,7 +47,7 @@
                 <Frame HorizontalOptions="Fill">
                     <StackLayout>
                         <Label Text="{Static p:Lang.auto_parking}" FontSize="Subtitle" HorizontalOptions="Center" />
-                        <Switch IsToggled="{Binding IsActive, Mode=TwoWay}" Scale="1" HorizontalOptions="Center" />
+                        <Switch IsToggled="{Binding IsActive, Mode=TwoWay}" Scale="1" HorizontalOptions="Center" IsEnabled="{Binding HasPermiddions}" />
                     </StackLayout>
                 </Frame>
 

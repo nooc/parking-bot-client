@@ -45,6 +45,7 @@ public partial class ServiceHelperService(IServiceProvider services, ServiceData
         Preferences.Set(Values.SRV_IS_ACTIVE, true);
         await _api.Value.InitUser();
         _bt.Value.SetEnabled(true);
+
     }
 
     internal async Task StopAll()

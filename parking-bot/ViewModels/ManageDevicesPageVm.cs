@@ -12,6 +12,7 @@ namespace ParkingBot.ViewModels;
 public class ManageDevicesPageVm : BaseVm
 {
     private readonly VehicleBluetoothService _bt;
+    private readonly ServiceHelperService _hlp;
 
     public ObservableCollection<CarBtDevice> RegisteredCars { get; } = [];
     public ObservableCollection<BtDevice> PairedDevices { get; } = [];
@@ -19,9 +20,10 @@ public class ManageDevicesPageVm : BaseVm
     public Command RegisterDevice { get; }
     public Command UnregisterDevice { get; }
 
-    public ManageDevicesPageVm(ILogger<ManageDevicesPageVm> logger, VehicleBluetoothService vbs) : base(logger)
+    public ManageDevicesPageVm(ILogger<ManageDevicesPageVm> logger, VehicleBluetoothService vbs, ServiceHelperService hlp) : base(logger)
     {
         _bt = vbs;
+        _hlp = hlp;
         RegisterDevice = new Command<BtDevice>(ExecuteRegisterDevice);
         UnregisterDevice = new Command<CarBtDevice>(ExecuteUnregisterDevice);
     }
@@ -32,23 +34,20 @@ public class ManageDevicesPageVm : BaseVm
         RegisteredCars.Clear();
         List<string> regUuid = [];
         var regCars = _bt.GetRegisteredDevices();
-        regCars.Aggregate(RegisteredCars, (cars, car) =>
+        foreach (var car in regCars)
         {
             regUuid.Add(car.DeviceId);
-            cars.Add(car);
-            return cars;
-        });
-
-        _bt.GetPairedDevices().Aggregate(PairedDevices, (devices, device) =>
+            RegisteredCars.Add(car);
+        }
+        var devs = _bt.GetPairedDevices();
+        foreach (var dev in devs)
         {
-            if (!regUuid.Contains(device.DeviceId))
+            if (!regUuid.Contains(dev.DeviceId))
             {
                 // do not add registered to paired list
-                devices.Add(device);
+                PairedDevices.Add(dev);
             }
-            return devices;
-        });
-
+        }
     }
 
     private async void ExecuteRegisterDevice(BtDevice device)
@@ -66,7 +65,7 @@ public class ManageDevicesPageVm : BaseVm
                 else if (IsValidLicensePlate(reg))
                 {
                     _bt.RegisterCar(new CarBtDevice(reg, device));
-                    LoadModelCommand.Execute(this);
+                    LoadModelCommand.Execute(null);
                     return;
                 }
             }

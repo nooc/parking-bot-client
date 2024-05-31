@@ -5,7 +5,7 @@ using Shiny.BluetoothLE;
 
 namespace ParkingBot.Services;
 
-public class VehicleBluetoothService(IBleManager _bt, ServiceHelperService _hlp, ServiceData _data, AppService _api)
+public class VehicleBluetoothService(IBleManager _bt, BluetoothHelper _bth, ServiceHelperService _hlp, ServiceData _data, AppService _api)
 {
     private readonly Dictionary<string, CarBtDevice> ConnectedDict = [];
 
@@ -28,8 +28,7 @@ public class VehicleBluetoothService(IBleManager _bt, ServiceHelperService _hlp,
     /// <returns></returns>
     public IEnumerable<BtDevice> GetPairedDevices()
     {
-        var devices = _bt.TryGetPairedPeripherals();
-        return devices.Select(peripheral => new BtDevice(peripheral.Uuid, peripheral.Name ?? "???"));
+        return _bth.GetPairedDevices();
     }
 
     /// <summary>
@@ -38,8 +37,7 @@ public class VehicleBluetoothService(IBleManager _bt, ServiceHelperService _hlp,
     /// <returns></returns>
     public IEnumerable<BtDevice> GetConnectedDevices()
     {
-        var devices = _bt.TryGetPairedPeripherals();
-        return devices.Select(peripheral => new BtDevice(peripheral.Uuid, peripheral.Name ?? "???"));
+        return _bth.GetConnectedDevices();
     }
 
     /// <summary>
@@ -47,9 +45,9 @@ public class VehicleBluetoothService(IBleManager _bt, ServiceHelperService _hlp,
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public IEnumerable<CarBtDevice> GetRegisteredDevices()
+    public IEnumerable<CarBtDevice> GetRegisteredDevices(bool force = false)
     {
-        _hlp.GetSettings();
+        _hlp.GetSettings(force);
         return _data.Settings?.Vehicles.Select(v => new CarBtDevice(v.LicensePlate, v.DeviceId, v.Name)) ?? [];
     }
 
@@ -120,7 +118,7 @@ public class VehicleBluetoothService(IBleManager _bt, ServiceHelperService _hlp,
         var result = await _api.AddVehicle(add);
         if (result is Api.PbVehicle vehicle)
         {
-            _data?.Settings?.Vehicles.Add(vehicle);
+            _hlp.GetSettings(force: true);
         }
     }
 
@@ -134,7 +132,7 @@ public class VehicleBluetoothService(IBleManager _bt, ServiceHelperService _hlp,
         if (found != null)
         {
             await _api.DeleteVehicle(found.Id);
-            _data?.Settings?.Vehicles.Remove(found);
+            _hlp.GetSettings(force: true);
         }
     }
 }
