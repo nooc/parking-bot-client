@@ -9,6 +9,8 @@ namespace ParkingBot.Services;
 
 public class GothenburgOpenDataService(ILogger<GothenburgOpenDataService> logger, Http.HttpClientExt httpClient)
 {
+    private readonly double GDDS_TILE_DEG = 0.018;
+
     private readonly string[] TollEndpoints = [Values.GBG_BASE_PUBL_TOLL_URI, Values.GBG_BASE_PRIV_TOLL_URI];
 
     /// <summary>
@@ -84,5 +86,9 @@ public class GothenburgOpenDataService(ILogger<GothenburgOpenDataService> logger
             rendered = rendered.Replace("{EXT}", ext);
         }
         return rendered;
+    }
+
+    public void GetDggsTiles()
+    {
     }
 }

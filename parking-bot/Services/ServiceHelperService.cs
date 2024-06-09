@@ -1,5 +1,4 @@
-﻿using ParkingBot.Exceptions;
-using ParkingBot.Models.Parking;
+﻿using ParkingBot.Models.Parking;
 using ParkingBot.Properties;
 
 using Shiny;
@@ -10,49 +9,26 @@ namespace ParkingBot.Services;
 
 public partial class ServiceHelperService(IServiceProvider services, ServiceData _data)
 {
-    private Lazy<IGeofenceManager> _geo = services.GetLazyService<IGeofenceManager>();
-    private Lazy<IGpsManager> _gps = services.GetLazyService<IGpsManager>();
-    private Lazy<IJobManager> _job = services.GetLazyService<IJobManager>();
-    private Lazy<VehicleBluetoothService> _bt = services.GetLazyService<VehicleBluetoothService>();
-    private Lazy<TollParkingService> _toll = services.GetLazyService<TollParkingService>();
-    private Lazy<AppService> _api = services.GetLazyService<AppService>();
-
-    public void RequestAccess()
-    {
-        AssertAccessState("Bluetooth", _bt.Value.RequestAccessAsync());
-        AssertAccessState("Background Jobs", _job.Value.RequestAccess());
-        AssertAccessState("Location", _geo.Value.RequestAccess());
-        AssertAccessState("Gps", _gps.Value.RequestAccess(GpsRequest.Realtime(true)));
-    }
-
-    private static async void AssertAccessState(string source, Task<AccessState> statusTask)
-    {
-        var status = await statusTask;
-        switch (status)
-        {
-            case AccessState.Available:
-                return;
-            case AccessState.NotSupported:
-            case AccessState.NotSetup:
-                throw new ApplicationPermissionError(source, Lang.not_supported_msg);
-            default:
-                throw new ApplicationPermissionError(source, Lang.permission_error_msg);
-        }
-    }
+    private readonly Lazy<IGeofenceManager> _geo = services.GetLazyService<IGeofenceManager>();
+    private readonly Lazy<IGpsManager> _gps = services.GetLazyService<IGpsManager>();
+    private readonly Lazy<IJobManager> _job = services.GetLazyService<IJobManager>();
+    private readonly Lazy<TollParkingService> _toll = services.GetLazyService<TollParkingService>();
+    private readonly Lazy<AppService> _api = services.GetLazyService<AppService>();
+    private readonly Lazy<BluetoothHelper> _bth = services.GetLazyService<BluetoothHelper>();
+    private readonly Lazy<GeoFencingService> _geos = services.GetLazyService<GeoFencingService>();
 
     internal async void Start()
     {
-        Preferences.Set(Values.SRV_IS_ACTIVE, true);
-        await _api.Value.InitUser();
-        _bt.Value.SetEnabled(true);
-
+        bool init = await _api.Value.InitUser();
+        bool geo = false;
+        if (init) geo = await _geos.Value.SetEnabled(true);
+        Preferences.Set(Values.SRV_IS_ACTIVE, geo);
     }
 
     internal async Task StopAll()
     {
         Preferences.Set(Values.SRV_IS_ACTIVE, false);
         _job.Value.CancelAll();
-        _bt.Value.SetEnabled(false);
         await _gps.Value.StopListener();
         await _geo.Value.StopAllMonitoring();
         foreach (var (k, v) in _data.ParkingSites)
@@ -74,7 +50,6 @@ public partial class ServiceHelperService(IServiceProvider services, ServiceData
 
         _data.Settings = await _api.Value.GetData();
     }
-
 
     public bool IsServiceConfigured
     {

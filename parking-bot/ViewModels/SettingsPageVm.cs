@@ -38,7 +38,7 @@ public class SettingsPageVm(ILogger<SettingsPageVm> logger
         Preferences.Set(propertyName, _val);
     }
 
-    protected override void ExecuteLoadModelCommand()
+    protected override void ExecuteLoadModelCommand(Page page)
     {
         _PhoneNumber = Preferences.Get(Values.PARKING_PHONE_KEY, null);
         _SendReminder = Preferences.Get(Values.PARKING_REMINDER_KEY, false);

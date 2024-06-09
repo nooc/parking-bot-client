@@ -28,7 +28,7 @@ public class ManageDevicesPageVm : BaseVm
         UnregisterDevice = new Command<CarBtDevice>(ExecuteUnregisterDevice);
     }
 
-    protected override void ExecuteLoadModelCommand()
+    protected override void ExecuteLoadModelCommand(Page page)
     {
         PairedDevices.Clear();
         RegisteredCars.Clear();

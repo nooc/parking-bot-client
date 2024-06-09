@@ -17,10 +17,4 @@ namespace ParkingBot;
 [IntentFilter(
     [Shiny.ShinyNotificationIntents.NotificationClickAction],
     Categories = ["android.intent.category.DEFAULT"])]
-public class MainActivity : MauiAppCompatActivity
-{
-    protected override void OnActivityResult(int requestCode, Result resultCode, Intent? data)
-    {
-        base.OnActivityResult(requestCode, resultCode, data);
-    }
-}
+public class MainActivity : MauiAppCompatActivity { }

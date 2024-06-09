@@ -22,16 +22,12 @@ public sealed class SmsService
             if (tag != null) intent.Extras?.PutString("tag", tag);
             var sentIntent = PendingIntent.GetBroadcast(Android.App.Application.Context, SENT_CODE, intent, PendingIntentFlags.OneShot);
 
-            /* TODO: Disabled while testing.
-             * 
 #if ANDROID28_0_OR_GREATER
             smsManager.SendTextMessageWithoutPersisting(recipient, null, message, sentIntent, null);
-#elif ANDROID26_0_OR_GREATER
-            smsManager.SendTextMessage(recipient, null, message, sentIntent, null);
 #else
             throw new NotSupportedException();
 #endif
-            */
+
             return Task.FromResult(true);
         }
         return Task.FromResult(false);

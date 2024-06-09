@@ -34,15 +34,6 @@ public partial class ServiceStatusPage : ContentPage
     {
         Vm.LoadModelCommand.Execute(this);
         Timer.Start();
-        try
-        {
-            _hlp.RequestAccess();
-            Vm.HasPermiddions = true;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Permission error");
-        }
     }
 
     protected override void OnDisappearing()

@@ -19,8 +19,8 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="m:CarBtDevice">
                     <Grid HorizontalOptions="Fill" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" Margin="7">
-                        <Label Text="{Binding DeviceName}" Grid.Column="0" Grid.Row="0" FontSize="Caption" />
-                        <Label Text="{Binding RegNumber}" Grid.Column="0" Grid.Row="1" />
+                        <Label Text="{Binding RegNumber}" Grid.Column="0" Grid.Row="0" FontSize="Caption" />
+                        <Label Text="{Binding DeviceId}" Grid.Column="0" Grid.Row="1" />
                         <ImageButton Style="{DynamicResource minusButton}" Grid.Column="1" Grid.RowSpan="2"
                                      Command="{Binding Source={x:Reference manageDevicesPage},Path=BindingContext.UnregisterDevice}" CommandParameter="{Binding .}"/>
                     </Grid>

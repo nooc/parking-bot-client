@@ -14,6 +14,6 @@ public partial class App : Application
 
         InitializeComponent();
 
-        MainPage = new NavigationPage(mainPage);
+        MainPage = new PermPage(mainPage);
     }
 }

@@ -1,11 +1,9 @@
 ﻿using ParkingBot.Models;
 using ParkingBot.Models.Bt;
 
-using Shiny.BluetoothLE;
-
 namespace ParkingBot.Services;
 
-public class VehicleBluetoothService(IBleManager _bt, BluetoothHelper _bth, ServiceHelperService _hlp, ServiceData _data, AppService _api)
+public class VehicleBluetoothService(BluetoothHelper _bth, ServiceHelperService _hlp, ServiceData _data, AppService _api)
 {
     private readonly Dictionary<string, CarBtDevice> ConnectedDict = [];
 
@@ -15,11 +13,6 @@ public class VehicleBluetoothService(IBleManager _bt, BluetoothHelper _bth, Serv
         {
             return ConnectedDict.FirstOrDefault().Value;
         }
-    }
-
-    public Task<Shiny.AccessState> RequestAccessAsync()
-    {
-        return _bt.RequestAccessAsync();
     }
 
     /// <summary>
@@ -52,7 +45,7 @@ public class VehicleBluetoothService(IBleManager _bt, BluetoothHelper _bth, Serv
     }
 
     /// <summary>
-    /// Add device and trigger action.
+    /// Add device.
     /// </summary>
     /// <param name="uuid"></param>
     /// <param name="name"></param>
@@ -69,38 +62,13 @@ public class VehicleBluetoothService(IBleManager _bt, BluetoothHelper _bth, Serv
     }
 
     /// <summary>
-    /// Remove device and trigger action.
+    /// Remove device.
     /// </summary>
     /// <param name="uuid"></param>
     internal int Disconnect(string uuid)
     {
         ConnectedDict.Remove(uuid);
         return ConnectedDict.Count;
-    }
-
-    /// <summary>
-    /// Enable or disable scan.
-    /// If enabling scan while enabled, restart with refreshed device list.
-    /// </summary>
-    /// <param name="enabled"></param>
-    internal void SetEnabled(bool enabled)
-    {
-        if (enabled)
-        {
-            if (_bt.IsScanning) _bt.StopScan();
-            // get devices to scan for and start scan
-            var deviceEnum = GetRegisteredDevices();
-            var devices = deviceEnum.Select(dev => dev.DeviceId).ToArray() ?? [];
-            if (devices.Length != 0)
-            {
-                _bt.ScanForUniquePeripherals(
-                    new ScanConfig { ServiceUuids = devices });
-            }
-        }
-        else
-        {
-            _bt.StopScan();
-        }
     }
 
     /// <summary>
@@ -128,11 +96,14 @@ public class VehicleBluetoothService(IBleManager _bt, BluetoothHelper _bth, Serv
     /// <param name="devId"></param>
     public async void RemoveCar(string devId)
     {
-        var found = _data?.Settings?.Vehicles.Where(item => item.DeviceId == devId).FirstOrDefault();
-        if (found != null)
+        foreach (var car in _data?.Settings?.Vehicles ?? [])
         {
-            await _api.DeleteVehicle(found.Id);
-            _hlp.GetSettings(force: true);
+            if (car.DeviceId == devId)
+            {
+                await _api.DeleteVehicle(car.Id);
+                _hlp.GetSettings(force: true);
+                return;
+            }
         }
     }
 }

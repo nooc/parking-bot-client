@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.LifecycleEvents;
 
 using ParkingBot.Handlers;
 using ParkingBot.Pages;
@@ -29,7 +30,8 @@ public static class MauiProgram
                 fonts
                 .AddFont("OpenSans-Regular.ttf", "OpenSansRegular")
                 .AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-            });
+            })
+            .ConfigureLifecycleEvents(LifecycleConfig.Config);
 
         IServiceCollection isc = builder.Services;
 
@@ -38,7 +40,6 @@ public static class MauiProgram
             .AddGps<MultiDelegate>()
             .AddGeofencing<MultiDelegate>()
             .AddNotifications<MultiDelegate>()
-            .AddBluetoothLE<MultiDelegate>()
             .AddJobs()
             // Clients
             .AddSingleton<Http.HttpClientExt>()

@@ -6,8 +6,6 @@ using ParkingBot.Properties;
 using ParkingBot.Services;
 using ParkingBot.Util;
 
-using Shiny;
-using Shiny.BluetoothLE;
 using Shiny.Jobs;
 using Shiny.Locations;
 using Shiny.Notifications;
@@ -18,7 +16,7 @@ public class MultiDelegate(ILogger<MultiDelegate> _logger, IJobManager _jobs,
         //KioskParkingService _kiosk,
         VehicleBluetoothService _bt,
         ServiceData _data)
-    : IBleDelegate, IGeofenceDelegate, IGpsDelegate, INotificationDelegate
+    : IGeofenceDelegate, IGpsDelegate, INotificationDelegate
 {
     // NOTIFICATIONS
     public Task OnEntry(NotificationResponse response)
@@ -89,34 +87,6 @@ public class MultiDelegate(ILogger<MultiDelegate> _logger, IJobManager _jobs,
 
             _jobs.Register(new JobInfo(nameof(GeofenceEventJob), typeof(GeofenceEventJob), false, jobParams));
         }
-        return Task.CompletedTask;
-    }
-
-    // BLUETOOTH
-    // Parking actions should only occure while we have a device connection. 
-    public Task OnPeripheralStateChanged(IPeripheral peripheral)
-    {
-        Dictionary<string, string> jobParams = new()
-        {
-            { "uuid", peripheral.Uuid },
-            { "name", peripheral.Name??string.Empty }
-        };
-
-        if (peripheral.Status == ConnectionState.Connected)
-        {
-            jobParams.Add("state", "connected");
-        }
-        else if (peripheral.Status == ConnectionState.Disconnected)
-        {
-            jobParams.Add("state", "disconnected");
-        }
-        else return Task.CompletedTask;
-        _jobs.Register(new JobInfo(nameof(DeviceEventJob), typeof(DeviceEventJob), false, jobParams));
-        return Task.CompletedTask;
-    }
-
-    public Task OnAdapterStateChanged(AccessState state)
-    {
         return Task.CompletedTask;
     }
 }

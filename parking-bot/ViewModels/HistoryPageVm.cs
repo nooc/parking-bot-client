@@ -15,7 +15,7 @@ public class HistoryPageVm(ILogger<HistoryPageVm> logger,
 
     public ObservableCollection<ParkingTicket> History { get; } = [];
 
-    protected override void ExecuteLoadModelCommand()
+    protected override void ExecuteLoadModelCommand(Page page)
     {
         History.Clear();
         List<ParkingTicket> history = [];

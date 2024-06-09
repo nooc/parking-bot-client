@@ -16,7 +16,6 @@
         
         <map:MapControl Grid.Row="0"
             x:Name="MapCtrl"
-            Loaded="ContentPage_Loaded"
             VerticalOptions="FillAndExpand"
             HorizontalOptions="FillAndExpand" />
         <Label Grid.Row="1"

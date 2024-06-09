@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 using ParkingBot.Services;
 using ParkingBot.ViewModels;
 
@@ -7,16 +9,18 @@ public partial class MainPage : TabbedPage
 {
     private readonly ServiceHelperService Services;
 
-    public MainPage(MainPageVm vm, ServiceStatusPage ssp, MapPage pmp, HistoryPage hp, ServiceHelperService services)
+    public MainPage(ILogger<MainPage> _logger, MainPageVm vm, ServiceHelperService services,
+        ServiceStatusPage _status, MapPage _map, HistoryPage _history
+        )
     {
         Services = services;
 
         InitializeComponent();
 
-        BindingContext = vm;
+        Children.Add(_status);
+        Children.Add(_map);
+        Children.Add(_history);
 
-        Children.Add(ssp);
-        Children.Add(pmp);
-        Children.Add(hp);
+        BindingContext = vm;
     }
 }

@@ -26,7 +26,7 @@ public class ServiceStatusPageVm(ILogger<MainPageVm> logger, GeoFencingService _
     public string UserGreeting { get; private set; } = string.Empty;
     public bool HasPermiddions { get => _HasPermiddions; set => SetProperty(ref _HasPermiddions, value); }
 
-    protected async override void ExecuteLoadModelCommand()
+    protected async override void ExecuteLoadModelCommand(Page page)
     {
         UserGreeting = $"{Lang.hello} {Preferences.Get(Values.TOKEN_USER_KEY, string.Empty)}";
 

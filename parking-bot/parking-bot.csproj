@@ -51,12 +51,11 @@
 	<ItemGroup>
 		<PackageReference Include="Google.Apis.PlayIntegrity.v1" Version="1.68.0.3416" />
 		<PackageReference Include="Mapsui.Maui" Version="4.1.6" />
-		<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="7.5.2" />
+		<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="7.6.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.40" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.40" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="9.0.0" />
-		<PackageReference Include="Shiny.BluetoothLE" Version="3.3.3" />
 		<PackageReference Include="Shiny.Hosting.Maui" Version="3.3.3" />
 		<PackageReference Include="Shiny.Jobs" Version="3.3.3" />
 		<PackageReference Include="Shiny.Locations" Version="3.3.3" />
@@ -74,8 +73,14 @@
 	  <Compile Update="Pages\MapPage.xaml.cs">
 	    <DependentUpon>MapPage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Pages\PermPage.xaml.cs">
+	    <DependentUpon>PermPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Pages\ServiceStatusPage.xaml.cs">
 	    <DependentUpon>ServiceStatusPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Platforms\iOS\LifecycleConfig.cs">
+	    <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
 	  </Compile>
 	  <Compile Update="Platforms\iOS\Services\BluetoothHelper.cs">
 	    <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
@@ -94,10 +99,9 @@
 	  <MauiXaml Update="Pages\ManageDevicesPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Map\" />
+	  <MauiXaml Update="Pages\PermPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 
 	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionparkingbotHideInfoBar="True" XamarinHotReloadGenericExceptionInfoBarparkingbotHideInfoBar="True" /></VisualStudio></ProjectExtensions>

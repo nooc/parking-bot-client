@@ -12,31 +12,21 @@ public partial class MapPage : ContentPage
         InitializeComponent();
 
         BindingContext = Vm = viewModel;
+
+        Appearing += MapPage_Appearing;
+        Disappearing += MapPage_Disappearing;
     }
 
-    private void ContentPage_Loaded(object sender, EventArgs e)
-    {
-        if (MapCtrl.Map is Mapsui.Map map)
-        {
-            Vm.Map = map;
-            map.Info += MapInfo;
-        }
-    }
-
-    private async void MapInfo(object? sender, Mapsui.MapInfoEventArgs e)
-    {
-        await DisplayAlert("info", e.MapInfo?.WorldPosition?.ToString(), "ok");
-    }
-
-    protected override void OnAppearing()
-    {
-        _locationUpdates = true;
-        Dispatcher.StartTimer(TimeSpan.FromSeconds(4), UpdateLocation);
-        Vm.LoadModelCommand.Execute(this);
-    }
-    protected override void OnDisappearing()
+    private void MapPage_Disappearing(object? sender, EventArgs e)
     {
         _locationUpdates = false;
+    }
+
+    private void MapPage_Appearing(object? sender, EventArgs e)
+    {
+        _locationUpdates = true;
+        Dispatcher.StartTimer(TimeSpan.FromSeconds(2), UpdateLocation);
+        Vm.LoadModelCommand.Execute(this);
     }
 
     private async void DoUpdateLocation()
@@ -52,5 +42,10 @@ public partial class MapPage : ContentPage
     {
         DoUpdateLocation();
         return _locationUpdates;
+    }
+
+    internal void SetMap(Mapsui.Map map)
+    {
+        MapCtrl.Map = map;
     }
 }
