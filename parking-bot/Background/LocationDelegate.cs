@@ -8,24 +8,24 @@ using ParkingBot.Util;
 
 using Shiny.Jobs;
 using Shiny.Locations;
-using Shiny.Notifications;
 
 namespace ParkingBot.Handlers;
 
-public class MultiDelegate(ILogger<MultiDelegate> _logger, IJobManager _jobs,
+public class LocationDelegate(ILogger<LocationDelegate> _logger, IJobManager _jobs,
         //KioskParkingService _kiosk,
         VehicleBluetoothService _bt,
         ServiceData _data)
-    : IGeofenceDelegate, IGpsDelegate, INotificationDelegate
+    : IGeofenceDelegate, IGpsDelegate
 {
-    // NOTIFICATIONS
-    public Task OnEntry(NotificationResponse response)
-    {
-        return Task.CompletedTask;
-    }
+    //
+    // IGpsDelegate
+    //
 
-    // GPS
-    // Gps update event handler for when inside a region.
+    /// <summary>
+    /// Gps handler
+    /// </summary>
+    /// <param name="reading"></param>
+    /// <returns></returns>
     public Task OnReading(GpsReading reading)
     {
         _logger.LogInformation("On gps reading");
@@ -64,7 +64,10 @@ public class MultiDelegate(ILogger<MultiDelegate> _logger, IJobManager _jobs,
         return Task.CompletedTask;
     }
 
-    // GEO FENCING
+    //
+    // IGeofenceDelegate
+    //
+
     // Region intersection event handler for when parking engine is active.
     public Task OnStatusChanged(GeofenceState newStatus, GeofenceRegion region)
     {

@@ -15,6 +15,6 @@ namespace ParkingBot;
     ConfigChanges.SmallestScreenSize |
     ConfigChanges.Density)]
 [IntentFilter(
-    [Shiny.ShinyNotificationIntents.NotificationClickAction],
+    [Shiny.ShinyNotificationIntents.NotificationClickAction, Shiny.ShinyPushIntents.NotificationClickAction],
     Categories = ["android.intent.category.DEFAULT"])]
 public class MainActivity : MauiAppCompatActivity { }

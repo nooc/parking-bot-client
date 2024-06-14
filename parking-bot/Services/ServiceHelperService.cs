@@ -25,6 +25,10 @@ public partial class ServiceHelperService(IServiceProvider services, ServiceData
         Preferences.Set(Values.SRV_IS_ACTIVE, geo);
     }
 
+    /// <summary>
+    /// Stopp all monitoring services and any active parking.
+    /// </summary>
+    /// <returns></returns>
     internal async Task StopAll()
     {
         Preferences.Set(Values.SRV_IS_ACTIVE, false);

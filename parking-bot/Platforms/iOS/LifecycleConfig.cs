@@ -4,14 +4,14 @@ using ParkingBot.Core;
 
 namespace ParkingBot;
 
-internal class LifecycleConfig : LifecycleConfigBase
+public class LifecycleConfig : LifecycleConfigBase
 {
-    public static void Config(ILifecycleBuilder builder)
+    public void Config(ILifecycleBuilder builder)
     {
         builder.AddiOS(iOSConfig);
     }
 
-    private static void iOSConfig(IiOSLifecycleBuilder iOSBuilder)
+    private void iOSConfig(IiOSLifecycleBuilder iOSBuilder)
     {
         iOSBuilder.WillTerminate(del => Terminating());
     }
