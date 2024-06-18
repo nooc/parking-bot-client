@@ -183,9 +183,20 @@ public class AppService(ILogger<AppService> logger, Http.HttpClientInt client)
     }
 
     //
+    // Get geo cell and surrounding cell ids.
+    //
+    public async Task<List<string>?> GetGeoCellIds(double lat, double lon)
+    {
+        return await Get<List<string>>($"carpark/geo?lat={lat}&lon={lon}");
+    }
+    public async Task<Dictionary<string, Api.PbCarParks>?> GetGeoCells(List<string> cells)
+    {
+        return await Post<Dictionary<string, Api.PbCarParks>, List<string>>("carpark/geo", cells);
+    }
+
+    //
     // Parking
     //
-
     public async Task<Api.PbCarParks?> GetCarParks()
     {
         return await Get<Api.PbCarParks>("carpark");

@@ -32,8 +32,8 @@
                 <Label FontAttributes="Bold" FontSize="Title" Text="{Binding RegionName}" IsVisible="{Binding HasRegion}" HorizontalOptions="Center"/>
 
                 <!-- device -->
-                <Frame HorizontalOptions="Fill" Grid.Column="0">
-                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                <Frame HorizontalOptions="Fill" Grid.Column="0" Margin="0,20,0,0">
+                    <Grid ColumnDefinitions="*,64" RowDefinitions="Auto,Auto">
                         <Label Text="Connected Device" FontSize="Subtitle" HorizontalOptions="Center" Grid.Row="0" />
                         <Label Text="none" HorizontalOptions="Center" Grid.Row="1" />
 
@@ -45,10 +45,11 @@
 
                 <!-- service status -->
                 <Frame HorizontalOptions="Fill">
-                    <StackLayout>
-                        <Label Text="{Static p:Lang.auto_parking}" FontSize="Subtitle" HorizontalOptions="Center" />
-                        <Switch IsToggled="{Binding IsActive, Mode=TwoWay}" Scale="1" HorizontalOptions="Center" IsEnabled="{Binding HasPermiddions}" />
-                    </StackLayout>
+                    <Grid ColumnDefinitions="*,64" RowDefinitions="Auto,Auto">
+                        <Label Text="{Static p:Lang.auto_parking}" FontSize="Subtitle" HorizontalOptions="Center" Grid.Row="0" />
+                        <Switch IsToggled="{Binding IsActive, Mode=TwoWay}" Scale="1" HorizontalOptions="Center" Grid.Row="1" />
+                        <BoxView WidthRequest="10" HeightRequest="10" BackgroundColor="Transparent" Grid.Column="1" />
+                    </Grid>
                 </Frame>
 
             </VerticalStackLayout>

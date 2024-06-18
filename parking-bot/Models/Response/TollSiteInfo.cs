@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ParkingBot.Models.Parking;
+namespace ParkingBot.Models.Response;
 
-public sealed class TollSiteInfo : ISiteInfo
+public sealed class TollSiteInfo : Parking.ISiteInfo
 {
     public string? Id { get; set; } // "429"
     public string? Name { get; set; } // "Kviberg Kasernområde"

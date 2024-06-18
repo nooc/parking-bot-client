@@ -19,7 +19,7 @@ public sealed class FreeSiteInfo
 
     public double Lat { get; set; } // ex 1.26743233E+15
 
-    public string Long { get; set; } // ex 1.26743233E+15
+    public string? Long { get; set; } // ex 1.26743233E+15
 
     public string? WKT { get; set; } // String content"
 }

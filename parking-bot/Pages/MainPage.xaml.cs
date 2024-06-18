@@ -16,10 +16,8 @@ public partial class MainPage : TabbedPage
         Services = services;
 
         InitializeComponent();
-
-        Children.Add(_status);
-        Children.Add(_map);
-        Children.Add(_history);
+        List<Page> pages = [_status, _map, _history];
+        pages.ForEach(page => { if (!Children.Contains(page)) Children.Add(page); });
 
         BindingContext = vm;
     }

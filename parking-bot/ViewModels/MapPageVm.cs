@@ -39,9 +39,12 @@ public class MapPageVm(ILogger<MapPageVm> logger, GothenburgOpenDataService _ope
             var layer = Mapsui.Tiling.OpenStreetMap.CreateTileLayer($"{Properties.Values.USER_AGENT_NAME}/{Properties.Values.USER_AGENT_VER}");
             LocationLayer = new MyLocationLayer(_Map);
 
+            var p = SM.FromLonLat(11.966667, 57.7);
+
             _Map.CRS = SPHERICAL_MERCATOR;
             _Map.Navigator.ViewportChanged += Navigator_ViewportChanged;
             _Map.Navigator.RotationLock = true;
+            _Map.Navigator.CenterOnAndZoomTo(new(p.x, p.y), 1, 0);
             _Map.Layers.Add(layer);
             _Map.Layers.Add(ParkingLayer);
             _Map.Layers.Add(LocationLayer);
@@ -57,17 +60,18 @@ public class MapPageVm(ILogger<MapPageVm> logger, GothenburgOpenDataService _ope
     {
         return new Layer
         {
-            DataSource = new ProjectingPinProvider(new PinProvider(_open)),
+            DataSource = new ProjectingFeatureProvider<PinProvider>(new(_open)),
             Name = "Parking",
             Style = null,
             IsMapInfoLayer = true
         };
     }
 
-    //TODO cache parkings. 
     void TryLoadPins()
     {
-        if (VpChangeTime < DateTime.Now.Ticks)
+        var last = VpChangeTime;
+        VpChangeTime = DateTime.Now.Ticks + TimeSpan.TicksPerSecond; // +1sec
+        if (last < DateTime.Now.Ticks)
         {
             _Map?.Refresh(Mapsui.ChangeType.Discrete);
         }
@@ -99,7 +103,6 @@ public class MapPageVm(ILogger<MapPageVm> logger, GothenburgOpenDataService _ope
                     var (x, y) = SM.FromLonLat(loc.Longitude, loc.Latitude);
                     _Map?.Navigator.CenterOnAndZoomTo(new Mapsui.MPoint(x, y), 2);
                 }
-                //UpdateLocation();
             });
     }
     /*

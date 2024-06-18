@@ -29,24 +29,41 @@ public partial class PermPage : ContentPage
         }
     }
 
-    protected async override void OnAppearing()
+    protected override void OnAppearing()
+    {
+        ContinueOnPermissionSuccess();
+    }
+
+    private Task ContinueOnPermissionSuccess()
     {
         try
         {
-            await DoPerm<Permissions.LocationAlways>();
-            await DoPerm<Permissions.Bluetooth>();
-            await DoPerm<Permissions.Battery>();
-            await DoPerm<Permissions.Sms>();
-            await DoPerm<Permissions.PostNotifications>();
+            Task.WaitAll(
+                DoPerm<Permissions.LocationAlways>(),
+                DoPerm<Permissions.Bluetooth>(),
+                DoPerm<Permissions.Battery>(),
+                DoPerm<Permissions.Sms>(),
+                DoPerm<Permissions.PostNotifications>()
+                );
 
-            if (Application.Current is Application app && !(app.MainPage is NavigationPage))
+            if (Application.Current != null)
             {
-                app.MainPage = Main;
+                Application.Current.MainPage = new NavigationPage(Main);
             }
         }
         catch (ApplicationException)
         {
-            Application.Current?.Quit();
+            PermAtivity.IsRunning = false;
+            PermButton.IsVisible = true;
+            return DisplayAlert(Properties.Lang.error, Properties.Lang.permission_error_msg, "Ok");
         }
+        return Task.CompletedTask;
+    }
+
+    private void PermButton_Clicked(object sender, EventArgs e)
+    {
+        PermAtivity.IsRunning = true;
+        PermButton.IsVisible = false;
+        ContinueOnPermissionSuccess();
     }
 }

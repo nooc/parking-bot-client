@@ -448,7 +448,11 @@ namespace ParkingBot.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You need to have created an account containing the same phone number with &lt;a href=&quot;https://www.parkeringgoteborg.se/parking/&quot;&gt;Parkering Göteborg&lt;/a&gt;..
+        ///   Looks up a localized string similar to &lt;h3&gt;SMS parking&lt;/h3&gt;
+        ///&lt;p&gt;You need an account with &lt;a href=&quot;https://www.parkeringgoteborg.se/parking/&quot;&gt;Parkering Göteborg&lt;/a&gt;
+        ///and it needs to have this devices phone number registered.&lt;/p&gt;
+        ///&lt;h3&gt;Kiosk parking&lt;/h3&gt;
+        ///&lt;p&gt;You need to add you phone number below if you want a parking expiration notification.&lt;/p&gt;.
         /// </summary>
         internal static string sms_prereq {
             get {

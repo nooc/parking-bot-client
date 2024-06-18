@@ -1,4 +1,6 @@
-﻿namespace ParkingBot.Models;
+﻿using ParkingBot.Models.Parking;
+
+namespace ParkingBot.Models;
 
 public sealed class Api
 {
@@ -33,24 +35,32 @@ public sealed class Api
     {
         public required string Name { get; set; }
     }
-
-    public class PbTollParking
+    public abstract class PbParkingBase
     {
         public long Id { get; set; }
-        public required string CarParkId { get; set; }
-        public required string PhoneParkingCode { get; set; }
+        public required string CellId { get; set; }
+        public required string Geometry { get; set; }
     }
 
-    public class PbKioskParking
+    public class PbTollParking : PbParkingBase
     {
-        public long Id { get; set; }
-        public required string KioskId { get; set; }
+        public required TollSiteInfo Info { get; set; }
+    }
+
+    public class PbKioskParking : PbParkingBase
+    {
+        public required KioskSiteInfo Info { get; set; }
     }
 
     public class PbCarParks
     {
         public required List<PbTollParking> Toll { get; set; }
         public required List<PbKioskParking> Kiosk { get; set; }
+    }
+    public class SelectedCarParks
+    {
+        public required List<long> Toll { get; set; }
+        public required List<long> Kiosk { get; set; }
     }
 
     public class PbData

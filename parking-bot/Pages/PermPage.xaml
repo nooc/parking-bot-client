@@ -5,10 +5,22 @@
     <VerticalStackLayout
         HorizontalOptions="Fill"
         VerticalOptions="Fill">
-        <ProgressBar
+        <Label
+            Text="Requesting Permissions"
             HorizontalOptions="Center"
-            VerticalOptions="Center"
-            IsVisible="True" IsEnabled="True"/>
+            VerticalOptions="Center" />
+        <ActivityIndicator
+            x:Name="PermAtivity"
+            IsRunning="True"
+            HorizontalOptions="Center"
+            VerticalOptions="Center" />
+        <Button
+            x:Name="PermButton"
+            IsVisible="False"
+            Text="Request Permissions"
+            Clicked="PermButton_Clicked"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"/>
     </VerticalStackLayout>
 </ContentPage>
     

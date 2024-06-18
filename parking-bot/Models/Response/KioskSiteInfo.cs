@@ -1,6 +1,8 @@
-﻿namespace ParkingBot.Models.Response;
-/* TODO KioskSiteInfo
-public sealed class KioskSiteInfo : ISiteInfo
+﻿using System.Text.Json.Serialization;
+
+namespace ParkingBot.Models.Response;
+
+public sealed class KioskSiteInfo : Parking.ISiteInfo
 {
     public string? ExternalId { get; set; }
     public string? Name { get; set; }
@@ -24,4 +26,3 @@ public sealed class KioskSiteInfo : ISiteInfo
     [JsonIgnore]
     public string SiteAvailability => $"{AvailablePermitsCount} {Properties.Lang.available}";
 }
-*/

@@ -187,7 +187,11 @@
     <value>Fel i inställningarna.</value>
   </data>
   <data name="sms_prereq" xml:space="preserve">
-    <value>Du behöver ha skapar ett konto med samma telefonnummer hos &lt;a href="https://www.parkeringgoteborg.se/"&gt;Parkering Göteborg&lt;/a&gt;.</value>
+    <value>&lt;h3&gt;SMS parkering&lt;/h3&gt;
+&lt;p&gt;Du behöver ett konto hos &lt;a href="https://www.parkeringgoteborg.se/parking/"&gt;Parkering Göteborg&lt;/a&gt;
+och den behöver ha denna enhetens telefonnummer registrerad.&lt;/p&gt;
+&lt;h3&gt;Kiosk parkering&lt;/h3&gt;
+&lt;p&gt;Du behöver lägga till telefonnummer om du vill ha ett meddelande när parkeringen går ut.&lt;/p&gt;</value>
   </data>
   <data name="error" xml:space="preserve">
     <value>Fel</value>
